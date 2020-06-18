@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using SelfService.Repository;
 
 namespace SelfService.Server.Controllers
 {
@@ -13,6 +14,17 @@ namespace SelfService.Server.Controllers
     [Route("[controller]")]
     public class StudentController : ControllerBase
     {
+        private readonly ILogger<StudentController> logger;
+        private readonly IStudentRepository studentRepository;
+
+        public StudentController(
+            ILogger<StudentController> logger, 
+            IStudentRepository studentRepository)
+        {
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
+        }
+
         [HttpGet]
         public IEnumerable<Student> Get()
         {
@@ -32,9 +44,17 @@ namespace SelfService.Server.Controllers
         {
             return Task.FromResult(new ProfileResource{
                 Name = "sairama",
+                Email = "sairamaj@hotmail.com",
                 Grade = "10",
                 GitUrl = "http://github.com/sairamaj"
             });
+        }
+
+        [HttpPost]
+        [Route("profile")]
+        public async Task SaveProfile(ProfileResource profile)
+        {
+            await studentRepository.Save(profile);
         }
     }
 }

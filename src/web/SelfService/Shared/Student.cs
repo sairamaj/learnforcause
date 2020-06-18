@@ -11,6 +11,8 @@ namespace SelfService.Shared
         public string Grade {get; set;}
         public string Phone {get; set;}
         public string Email {get; set;}
-
+        public string GithubUrl {get; set;}
+        public string Location {get; set;}
+        public string Notes {get; set;}
     }
 }

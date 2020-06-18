@@ -1,0 +1,47 @@
+@page "/editprofile"
+
+@using SelfService.Shared
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+@if( profile == null){
+    <p><em>Loading...</em></p>
+}
+else{
+    <EditForm Model="profile" OnValidSubmit="SaveProfile">
+    <DataAnnotationsValidator/>
+     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                <p>
+                    <MatTextField Label="Name" @bind-Value="profile.GitUrl"/>
+                    <ValidationMessage For="@(() => profile.GitUrl)"/>
+                </p>
+<div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+                <MatButton Type="submit" Raised="true">Save</MatButton>
+            </div>                
+     </div>
+
+    </EditForm>
+}
+
+@code {
+    ProfileResource profile;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            profile = await Http.GetFromJsonAsync<ProfileResource>("student/profile");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    private async Task SaveProfile()
+    {
+        await Http.PostAsJsonAsync<ProfileResource>("student/profile", profile);
+        NavigationManager.NavigateTo("profiledata");
+    }
+}

@@ -3,12 +3,13 @@
 @using SelfService.Shared
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 
 @if( profileProperties == null){
     <p><em>Loading...</em></p>
 }
 else{
-
+<MatButton Raised="true" OnClick="@EditProfile" style="float: right">Edit</MatButton>
 <MatTable Items="@profileProperties" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
                 <td>@context.Key</td>
@@ -26,11 +27,17 @@ else{
             profile = await Http.GetFromJsonAsync<ProfileResource>("student/profile");
             profileProperties = profile.GetType()
                                         .GetProperties()
+                                        .OrderBy(p => p.Name)
                                         .ToDictionary(p => p.Name, p => p.GetValue(profile, null)?.ToString());
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
+    }
+
+    private void EditProfile()
+    {
+        NavigationManager.NavigateTo("editprofile");
     }
 }
