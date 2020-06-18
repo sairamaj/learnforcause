@@ -1,0 +1,30 @@
+﻿@page "/"
+
+@using SelfService.Shared
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClient Http
+
+@if( program == null)
+{
+    <p><em>Loading...</em></p>
+}
+else{
+    <p>@((MarkupString) @program.CurrentInformationAsMarkdown)
+    </p>
+}
+
+@code{
+    public ProgramResource program;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            program = await Http.GetFromJsonAsync<ProgramResource>("program");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

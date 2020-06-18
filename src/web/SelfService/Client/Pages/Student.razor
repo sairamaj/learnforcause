@@ -1,0 +1,60 @@
+@page "/studentdata"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using SelfService.Shared
+@* @attribute [Authorize] *@
+@inject HttpClient Http
+ @if (students == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+        <MatAccordion Multi="true">
+            @foreach(var student in students)
+            {
+                <MatExpansionPanel>
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader>
+                        <div class="mat-layout-grid">
+                                <div class="mat-layout-grid-inner">
+                                    <div class="mat-layout-grid-cell">@student.Name</div>
+                                    <div class="mat-layout-grid-cell">@student.Age</div>
+                                    <div class="mat-layout-grid-cell">@student.Email</div>
+                                </div>
+                        </div>
+                        </MatExpansionPanelHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <div class="mat-elevation-z10">
+                            <div class="mat-layout-grid">
+                                <div class="mat-layout-grid-inner">
+                                    <div class="mat-layout-grid-cell">@student.Name</div>
+                                    <div class="mat-layout-grid-cell">@student.Age</div>
+                                    <div class="mat-layout-grid-cell">@student.Email</div>
+                                    <div class="mat-layout-grid-cell">@student.Grade</div>
+                                </div>
+                            </div>                              
+                        </div>
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>
+            }
+        </MatAccordion>
+}
+
+@code {
+    private SelfService.Shared.Student[] students;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            students = await Http.GetFromJsonAsync<SelfService.Shared.Student[]>("Student");
+        }
+        catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+}

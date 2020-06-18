@@ -1,0 +1,36 @@
+@page "/profiledata"
+
+@using SelfService.Shared
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClient Http
+
+@if( profileProperties == null){
+    <p><em>Loading...</em></p>
+}
+else{
+
+<MatTable Items="@profileProperties" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                <td>@context.Key</td>
+                <td>@context.Value</td>
+            </MatTableRow>
+        </MatTable>
+}
+@code{
+    ProfileResource profile;
+    IDictionary<string, string> profileProperties;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            profile = await Http.GetFromJsonAsync<ProfileResource>("student/profile");
+            profileProperties = profile.GetType()
+                                        .GetProperties()
+                                        .ToDictionary(p => p.Name, p => p.GetValue(profile, null)?.ToString());
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}
