@@ -40,14 +40,9 @@ namespace SelfService.Server.Controllers
 
         [HttpGet]
         [Route("profile")]
-        public Task<ProfileResource> GetProfile()
+        public async Task<ProfileResource> GetProfile()
         {
-            return Task.FromResult(new ProfileResource{
-                Name = "sairama",
-                Email = "sairamaj@hotmail.com",
-                Grade = "10",
-                GitUrl = "http://github.com/sairamaj"
-            });
+            return await studentRepository.Get("sairamaj@hotmail.com");
         }
 
         [HttpPost]
@@ -55,6 +50,23 @@ namespace SelfService.Server.Controllers
         public async Task SaveProfile(ProfileResource profile)
         {
             await studentRepository.Save(profile);
+        }
+
+        [HttpPost]
+        [Route("/class")]
+        public async Task<string> AddAttendance(){
+            return await Task.FromResult(DateTime.Now.ToShortTimeString());
+        }
+
+        [HttpGet]
+        [Route("class/status/{id}")]
+        public async Task<ClassAttendance> GetClassStatus(string id){
+            return await Task.FromResult(
+                new ClassAttendance{
+                    Id = id,
+                    DateTime = DateTime.Now
+                }
+            );
         }
     }
 }

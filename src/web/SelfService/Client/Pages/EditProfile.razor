@@ -11,9 +11,21 @@
 else{
     <EditForm Model="profile" OnValidSubmit="SaveProfile">
     <DataAnnotationsValidator/>
-     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">
+     <div class="mat-layout-grid-cell mat-layout-grid-cell-span-8">
                 <p>
-                    <MatTextField Label="Name" @bind-Value="profile.GitUrl"/>
+                    <MatTextField Label="Location" @bind-Value="profile.Grade"/>
+                    <ValidationMessage For="@(() => profile.Grade)"/>
+                </p>
+                <p>
+                    <MatTextField Label="Phone" @bind-Value="profile.Phone"/>
+                    <ValidationMessage For="@(() => profile.Phone)"/>
+                </p>
+                <p>
+                    <MatTextField Label="Location" @bind-Value="profile.Location"/>
+                    <ValidationMessage For="@(() => profile.Location)"/>
+                </p>
+                <p>
+                    <MatTextField Label="Git Url" @bind-Value="profile.GitUrl"/>
                     <ValidationMessage For="@(() => profile.GitUrl)"/>
                 </p>
 <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">

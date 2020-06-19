@@ -32,7 +32,11 @@ namespace SelfService.Repository
         {
             await Task.Delay(0);
             var studentFile = Path.Combine(LocalStorage, profile.Email);
-            File.WriteAllText(studentFile, JsonSerializer.Serialize(profile));
+            File.WriteAllText(studentFile, JsonSerializer.Serialize(profile, new JsonSerializerOptions{
+                WriteIndented = true,
+                PropertyNameCaseInsensitive = true,
+                
+            }));
         }
 
         private void EnsureStorage()

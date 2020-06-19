@@ -20,5 +20,15 @@ namespace SelfService.Server.Controllers
                 CurrentInformation = System.IO.File.ReadAllText(@"c:\temp\program.md")
             });         
         }
+
+        [HttpGet]
+        [Route("class/current")]
+        public async Task<CurrentRunningClassInfo> GetClassRunningStatus(){
+            return await Task.FromResult(new CurrentRunningClassInfo{
+                Id = Guid.NewGuid().ToString(),
+                DateTime = DateTime.Now,
+                ClassName = "Java"
+            });
+        }
     }
 }

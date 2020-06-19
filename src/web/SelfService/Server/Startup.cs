@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using SelfService.Repository;
+using SelfService.Models;
 
 namespace SelfService.Server
 {
@@ -31,6 +32,8 @@ namespace SelfService.Server
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+            services.AddOptions();
+            services.AddOptions<ConnectionInfo>().Bind(Configuration.GetSection("ConnectionInfo"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

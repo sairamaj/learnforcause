@@ -9,22 +9,42 @@
     <p><em>Loading...</em></p>
 }
 else{
+    @if( currentRunningClass != null){
+        if( currentAttendance == null){
+            <MatButton Raised="true" OnClick="@AddAttendance" style="float: right">Add Attendance</MatButton>
+        }else{
+            <b><span style="float: right">Attending @currentRunningClass.ClassName @currentAttendance.DateTime</span></b>
+        }
+    }
     <p>@((MarkupString) @program.CurrentInformationAsMarkdown)
     </p>
 }
 
 @code{
-    public ProgramResource program;
+    ProgramResource program;
+    CurrentRunningClassInfo currentRunningClass;
+    ClassAttendance currentAttendance;
+
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             program = await Http.GetFromJsonAsync<ProgramResource>("program");
+            currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
+            if (currentRunningClass != null)
+            {
+                currentAttendance = await Http.GetFromJsonAsync<ClassAttendance>($"student/class/status/{currentRunningClass.Id}");
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
+    }
+
+    private async Task AddAttendance()
+    {
+        currentAttendance = await Http.GetFromJsonAsync<ClassAttendance>($"student/class/status/{currentRunningClass.Id}");
     }
 }
