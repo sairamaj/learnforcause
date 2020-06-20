@@ -96,5 +96,10 @@ namespace SelfService.Repository
 
             Directory.CreateDirectory(LocalStorage);
         }
+
+        public IAsyncEnumerable<HomePageResource> GetHomePageResources()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

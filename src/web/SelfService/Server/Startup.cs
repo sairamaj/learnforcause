@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using System.Linq;
 using SelfService.Repository;
 using SelfService.Server.Models;
+using SelfService.Server.Repository;
 
 namespace SelfService.Server
 {
@@ -27,6 +28,7 @@ namespace SelfService.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IStudentRepository, AzureStudentRepository>();
+            services.AddTransient<IAdminRepository, AdminRepository>();
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
 

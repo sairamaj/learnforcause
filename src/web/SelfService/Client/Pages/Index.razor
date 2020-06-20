@@ -16,15 +16,24 @@ else{
             <b><span style="float: right">Attending @currentRunningClass.ClassName @currentAttendance.DateTime</span></b>
         }
     }
-    <p>@((MarkupString) @program.CurrentInformationAsMarkdown)
-    </p>
+    <MatAccordion Multi="true">
+        @foreach(var resource in program.Resources){
+<MatExpansionPanel>
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader>@resource.Title</MatExpansionPanelHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <p>@((MarkupString) @resource.InfoAsMarkdown)</p>
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>            
+        }
+    </MatAccordion>
 }
 
 @code{
     ProgramResource program;
     CurrentRunningClassInfo currentRunningClass;
     StudentAttendance currentAttendance;
-
 
     protected override async Task OnInitializedAsync()
     {
