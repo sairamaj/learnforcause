@@ -13,21 +13,25 @@ variables:
 stages:
 - stage: 'build'
   displayName: 'build'
-  pool:
-    vmImage: 'vs2017-win2016'
-  steps:
-  - task: DotNetCoreCLI@2
-    displayName: 'build'
-    inputs:
-      command: publish
-      projects: src\web\SelfService\Server\SelfService.Server.csproj
-      arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+  jobs:
+    - job: 
+      displayName: 'build'
+      pool:
+        vmImage: 'vs2017-win2016'
+      steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'build'
+        inputs:
+          command: publish
+          projects: src\web\SelfService\Server\SelfService.Server.csproj
+          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+          zipAfterPublish: true
 
-  - task: PublishBuildArtifacts@1
-    inputs:
-      displayName: 'Artifacts'
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'drop'
+      - task: PublishBuildArtifacts@1
+        displayName: 'Artifacts'
+        inputs:
+          pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+          artifactName: 'drop'
 
 - stage: 'deploy'
   displayName: 'deploy'
@@ -35,7 +39,7 @@ stages:
   - deployment: 
     pool:
       vmImage: 'vs2017-win2016'
-    envionment: '$(EnvironmentName)'
+    environment: '$(EnvironmentName)'
     strategy:
       runOnce:
         deploy:
@@ -43,8 +47,8 @@ stages:
             - task: AzureRMWebAppDeployment@4
               displayName: Azure App service apiVersion
               inputs:
-                appType: WebAppNameconnected
-                connectedServiceNae: $(AzureSubscriptionEndpoint)
+                appType: webApp
+                connectedServiceName: $(AzureSubscriptionEndpoint)
                 WebAppName: $(WebAppName)
                 Package: $(System.WorkFolder)/**/Server.zip
                 UseWebDeploy: true
