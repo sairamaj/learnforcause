@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SelfService.Repository;
+using SelfService.Server.Extensions;
 
 namespace SelfService.Server.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class StudentController : ControllerBase
@@ -18,7 +20,7 @@ namespace SelfService.Server.Controllers
         private readonly IStudentRepository studentRepository;
 
         public StudentController(
-            ILogger<StudentController> logger, 
+            ILogger<StudentController> logger,
             IStudentRepository studentRepository)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -31,7 +33,7 @@ namespace SelfService.Server.Controllers
             return new List<Student>{
                 new Student { Name = "sai", Age = 16, Email = "sairamaj@hotmail.com",
                 Grade = "10th", Phone = "5035332071"
-                
+
                 },
                 new Student { Name = "ram"},
                 new Student { Name = "krishna"}
@@ -53,20 +55,38 @@ namespace SelfService.Server.Controllers
         }
 
         [HttpPost]
-        [Route("/class")]
-        public async Task<string> AddAttendance(){
-            return await Task.FromResult(DateTime.Now.ToShortTimeString());
+        [Route("class/{id}")]
+        public async Task AddAttendance(Guid id)
+        {
+            try
+            {
+            this.logger.LogInformation($"AddAttendance : {id}: {User.GetName()}");
+            await this.studentRepository.AddAttendance(User.GetName(), id);
+                
+            }
+            catch (System.Exception e)
+            {
+                this.logger.LogError($"AddAttendance : {id} : error:{e}");
+               
+                throw;
+            }
         }
 
         [HttpGet]
-        [Route("class/status/{id}")]
-        public async Task<ClassAttendance> GetClassStatus(string id){
-            return await Task.FromResult(
-                new ClassAttendance{
-                    Id = id,
-                    DateTime = DateTime.Now
-                }
-            );
+        [Route("class/{id}")]
+        public async Task<StudentAttendance> GetClassStatus(Guid id)
+        {
+            this.logger.LogInformation($"GetClassStatus : {id}");
+            try
+            {
+                // change the return tupe so that we can send not found and other proper http status codes.
+                return await this.studentRepository.GetAttendance(User.GetName(), id);
+            }
+            catch (System.Exception e)
+            {
+                this.logger.LogError($"GetClassStatus : {id} : error:{e}");
+                throw;
+            }
         }
     }
 }

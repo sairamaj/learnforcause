@@ -23,7 +23,7 @@ else{
 @code{
     ProgramResource program;
     CurrentRunningClassInfo currentRunningClass;
-    ClassAttendance currentAttendance;
+    StudentAttendance currentAttendance;
 
 
     protected override async Task OnInitializedAsync()
@@ -34,8 +34,16 @@ else{
             currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
             if (currentRunningClass != null)
             {
-                currentAttendance = await Http.GetFromJsonAsync<ClassAttendance>($"student/class/status/{currentRunningClass.Id}");
+                try
+                {
+                    currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
+                }
+                catch (Exception)
+                {
+                    // Ignore for now.
+                }
             }
+
         }
         catch (AccessTokenNotAvailableException exception)
         {
@@ -45,6 +53,7 @@ else{
 
     private async Task AddAttendance()
     {
-        currentAttendance = await Http.GetFromJsonAsync<ClassAttendance>($"student/class/status/{currentRunningClass.Id}");
+        await Http.PostAsync($"student/class/{currentRunningClass.Id}", new StringContent(string.Empty));
+        currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
     }
 }

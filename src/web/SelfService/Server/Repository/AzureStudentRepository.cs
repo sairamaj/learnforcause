@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
@@ -31,6 +32,16 @@ namespace SelfService.Repository
             //table.
 
             throw new System.NotImplementedException();
+        }
+
+        public Task AddAttendance(string name, Guid classId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<StudentAttendance> GetAttendance(string name, Guid classId)
+        {
+            throw new NotImplementedException();
         }
 
         private CloudStorageAccount StorageAccount => CloudStorageAccount.Parse(this.connectionInfo.StorageConnectionString);
