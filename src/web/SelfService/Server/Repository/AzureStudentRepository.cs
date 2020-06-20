@@ -2,7 +2,8 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage;
-using SelfService.Models;
+using Microsoft.WindowsAzure.Storage.Table;
+using SelfService.Server.Models;
 using SelfService.Shared;
 
 namespace SelfService.Repository
@@ -20,18 +21,24 @@ namespace SelfService.Repository
             connectionInfo = options.Value;
         }
 
-        public Task<ProfileResource> Get(string name)
+        public async Task<ProfileEntity> GetProfile(string name)
         {
-            throw new System.NotImplementedException();
+            var tableClient = this.StorageAccount.CreateCloudTableClient();
+            var table = tableClient.GetTableReference("student");
+            var retrieveOperation = TableOperation.Retrieve<ProfileEntity>(name, name);
+            var result = await table.ExecuteAsync(retrieveOperation);
+            return result.Result as ProfileEntity;
         }
 
-        public Task Save(ProfileResource resource)
+        public async Task SaveProfile(ProfileEntity entity)
         {
             var tableClient = this.StorageAccount.CreateCloudTableClient();
             var table = tableClient.GetTableReference("student");
             //table.
 
-            throw new System.NotImplementedException();
+            await table.CreateIfNotExistsAsync();
+            var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
+            await table.ExecuteAsync(insertOrMergeOperation);
         }
 
         public Task AddAttendance(string name, Guid classId)
@@ -41,7 +48,7 @@ namespace SelfService.Repository
 
         public Task<StudentAttendance> GetAttendance(string name, Guid classId)
         {
-            throw new NotImplementedException();
+            return Task.FromResult<StudentAttendance>(null);
         }
 
         private CloudStorageAccount StorageAccount => CloudStorageAccount.Parse(this.connectionInfo.StorageConnectionString);

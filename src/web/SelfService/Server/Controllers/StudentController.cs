@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SelfService.Repository;
 using SelfService.Server.Extensions;
+using SelfService.Server.Models;
 
 namespace SelfService.Server.Controllers
 {
@@ -44,14 +45,34 @@ namespace SelfService.Server.Controllers
         [Route("profile")]
         public async Task<ProfileResource> GetProfile()
         {
-            return await studentRepository.Get("sairamaj@hotmail.com");
+            var entity =  await studentRepository.GetProfile(User.GetName());
+            if( entity == null){
+                return new ProfileResource{
+                    Name = User.GetName(),
+                    Email = User.GetEmail()
+                };
+            }
+            return new ProfileResource{
+                Name = entity.Name,
+                Email = User.GetEmail(),
+                Location = entity.Location,
+                GitUrl = entity.GithubUrl,
+                Grade = entity.Grade,
+                Phone = entity.Phone,
+            };
         }
 
         [HttpPost]
         [Route("profile")]
         public async Task SaveProfile(ProfileResource profile)
         {
-            await studentRepository.Save(profile);
+            await studentRepository.SaveProfile(new ProfileEntity{
+                Name = profile.Name,
+                Location  = profile.Location,
+                Grade = profile.Grade,
+                Phone = profile.Phone,
+                GithubUrl = profile.GitUrl
+            });
         }
 
         [HttpPost]

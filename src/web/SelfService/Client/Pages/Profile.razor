@@ -29,6 +29,7 @@ else{
                                         .GetProperties()
                                         .OrderBy(p => p.Name)
                                         .ToDictionary(p => p.Name, p => p.GetValue(profile, null)?.ToString());
+            
         }
         catch (AccessTokenNotAvailableException exception)
         {

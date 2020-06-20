@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Linq;
 using SelfService.Repository;
-using SelfService.Models;
+using SelfService.Server.Models;
 
 namespace SelfService.Server
 {
@@ -26,7 +26,7 @@ namespace SelfService.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IStudentRepository,LocalStudentRepository>();
+            services.AddTransient<IStudentRepository, AzureStudentRepository>();
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
 

@@ -1,4 +1,4 @@
-namespace SelfService.Models
+namespace SelfService.Server.Models
 {
     class ConnectionInfo
     {

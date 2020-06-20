@@ -4,12 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using SelfService.Models;
+using SelfService.Server.Models;
+using SelfService.Server.Repository;
 using SelfService.Shared;
 
 namespace SelfService.Repository
 {
-    internal class LocalStudentRepository : IStudentRepository
+    internal class LocalStudentRepository : IStudentRepository, IAdminRepository
     {
         private const string LocalStorage = @"c:\temp\learnbycause";
         public LocalStudentRepository()
@@ -36,18 +37,19 @@ namespace SelfService.Repository
             await File.WriteAllTextAsync(classIdFile, JsonSerializer.Serialize(attendances));
         }
 
-        public async Task<ProfileResource> Get(string email)
+        public async Task<ProfileEntity> GetProfile(string email)
         {
-            var studentFile = Path.Combine(LocalStorage, email);
-            if (!File.Exists(studentFile))
-            {
-                return await Task.FromResult(new ProfileResource
-                {
-                });
-            }
+            throw new NotImplementedException();
+            // var studentFile = Path.Combine(LocalStorage, email);
+            // if (!File.Exists(studentFile))
+            // {
+            //     return await Task.FromResult(new ProfileResource
+            //     {
+            //     });
+            // }
 
-            return await Task.FromResult(JsonSerializer.Deserialize<ProfileResource>
-                    (await File.ReadAllTextAsync(studentFile)));
+            // return await Task.FromResult(JsonSerializer.Deserialize<ProfileResource>
+            //         (await File.ReadAllTextAsync(studentFile)));
         }
 
         public async Task<StudentAttendance> GetAttendance(string name, Guid classId)
@@ -62,16 +64,27 @@ namespace SelfService.Repository
             return attendances.FirstOrDefault(s => s.Name == name);
         }
 
-        public async Task Save(ProfileResource profile)
+        public Task SaveProfile(ProfileEntity profile)
         {
-            await Task.Delay(0);
-            var studentFile = Path.Combine(LocalStorage, profile.Email);
-            File.WriteAllText(studentFile, JsonSerializer.Serialize(profile, new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                PropertyNameCaseInsensitive = true,
+            throw new NotImplementedException();
+            // await Task.Delay(0);
+            // var studentFile = Path.Combine(LocalStorage, profile.Email);
+            // File.WriteAllText(studentFile, JsonSerializer.Serialize(profile, new JsonSerializerOptions
+            // {
+            //     WriteIndented = true,
+            //     PropertyNameCaseInsensitive = true,
 
-            }));
+            // }));
+        }
+
+        public Task StartClass()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task StopClass()
+        {
+            throw new NotImplementedException();
         }
 
         private void EnsureStorage()
