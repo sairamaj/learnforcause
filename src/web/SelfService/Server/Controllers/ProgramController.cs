@@ -48,11 +48,12 @@ namespace SelfService.Server.Controllers
         [HttpGet]
         [Route("class/current")]
         public async Task<CurrentRunningClassInfo> GetClassRunningStatus(){
-            return await Task.FromResult(new CurrentRunningClassInfo{
-                Id = Guid.NewGuid().ToString(),
-                DateTime = DateTime.Now,
-                ClassName = "Java"
-            });
+            return null;
+            // return await Task.FromResult(new CurrentRunningClassInfo{
+            //     Id = Guid.NewGuid().ToString(),
+            //     DateTime = DateTime.Now,
+            //     ClassName = "Java"
+            // });
         }
     }
 }

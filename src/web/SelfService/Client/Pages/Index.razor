@@ -12,6 +12,8 @@ else{
     @if( currentRunningClass != null){
         if( currentAttendance == null){
             <MatButton Raised="true" OnClick="@AddAttendance" style="float: right">Add Attendance</MatButton>
+            <br/>
+            <br/>
         }else{
             <b><span style="float: right">Attending @currentRunningClass.ClassName @currentAttendance.DateTime</span></b>
         }
@@ -40,19 +42,18 @@ else{
         try
         {
             program = await Http.GetFromJsonAsync<ProgramResource>("program");
-            currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
-            if (currentRunningClass != null)
+            try
             {
-                try
+                currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
+                if (currentRunningClass != null)
                 {
                     currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
                 }
-                catch (Exception)
-                {
-                    // Ignore for now.
-                }
             }
-
+            catch (Exception)
+            {
+                // Ignore for now.
+            }
         }
         catch (AccessTokenNotAvailableException exception)
         {

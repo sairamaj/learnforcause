@@ -12,23 +12,27 @@ else{
 <MatButton Raised="true" OnClick="@EditProfile" style="float: right">Edit</MatButton>
 <MatTable Items="@profileProperties" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
-                <td>@context.Key</td>
+                <td>@context.Name</td>
                 <td>@context.Value</td>
             </MatTableRow>
         </MatTable>
 }
 @code{
     ProfileResource profile;
-    IDictionary<string, string> profileProperties;
+    IEnumerable<ProfileData> profileProperties;
     protected override async Task OnInitializedAsync()
     {
         try
         {
             profile = await Http.GetFromJsonAsync<ProfileResource>("student/profile");
-            profileProperties = profile.GetType()
-                                        .GetProperties()
-                                        .OrderBy(p => p.Name)
-                                        .ToDictionary(p => p.Name, p => p.GetValue(profile, null)?.ToString());
+            var profileData = new List<ProfileData>();
+            profileData.Add(new ProfileData {Name = "Name", Value = profile.Name});
+            profileData.Add(new ProfileData {Name = "Email", Value = profile.Email});
+            profileData.Add(new ProfileData {Name = "Grade", Value = profile.Grade});
+            profileData.Add(new ProfileData {Name = "Location", Value = profile.Location});
+            profileData.Add(new ProfileData {Name = "Phone", Value = profile.Phone});
+            profileData.Add(new ProfileData {Name = "GitUrl", Value = profile.GitUrl});
+            profileProperties = profileData;
             
         }
         catch (AccessTokenNotAvailableException exception)
@@ -40,5 +44,11 @@ else{
     private void EditProfile()
     {
         NavigationManager.NavigateTo("editprofile");
+    }
+
+    class ProfileData
+    {
+        public string Name {get; set;}
+        public string Value {get; set;}
     }
 }
