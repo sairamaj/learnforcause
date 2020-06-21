@@ -1,0 +1,1 @@
+Homework is very important. Any computer programming can be mastered only by practicing. I will be laying down some guidelines for home work in upcoming classes regarding home work.

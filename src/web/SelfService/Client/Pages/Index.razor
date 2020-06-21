@@ -50,9 +50,10 @@ else{
                     currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // Ignore for now.
+                System.Console.WriteLine($"Error: {e}");
             }
         }
         catch (AccessTokenNotAvailableException exception)

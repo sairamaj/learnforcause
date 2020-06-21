@@ -39,7 +39,7 @@ namespace SelfService.Server
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-               // .UseSerilog()
+                .UseSerilog()
                 .ConfigureLogging((hostingContext, builder) =>
                     {
                         builder.AddFile("Logs/SelfService-{Date}.txt");
