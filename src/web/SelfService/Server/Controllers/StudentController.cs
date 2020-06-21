@@ -59,6 +59,7 @@ namespace SelfService.Server.Controllers
                 GitUrl = entity.GithubUrl,
                 Grade = entity.Grade,
                 Phone = entity.Phone,
+                RegisteredClass = entity.RegisteredClass
             };
         }
 
@@ -71,7 +72,8 @@ namespace SelfService.Server.Controllers
                 Location  = profile.Location,
                 Grade = profile.Grade,
                 Phone = profile.Phone,
-                GithubUrl = profile.GitUrl
+                GithubUrl = profile.GitUrl,
+                RegisteredClass = profile.RegisteredClass
             });
         }
 

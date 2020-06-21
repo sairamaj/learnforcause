@@ -17,6 +17,7 @@ namespace SelfService.Server.Models
         public string Location { get; set; }
         public string Phone { get; set; }
         public string Grade {get; set;}
+        public string RegisteredClass {get; set;}
         public string GithubUrl { get; set; }
     }
 }

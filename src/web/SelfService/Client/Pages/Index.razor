@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @using SelfService.Shared
+@using System.Linq
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject HttpClient Http
 
@@ -19,7 +20,7 @@ else{
         }
     }
     <MatAccordion Multi="true">
-        @foreach(var resource in program.Resources){
+        @foreach(var resource in program.Resources.OrderBy(r=> r.Order)){
 <MatExpansionPanel>
                     <MatExpansionPanelSummary>
                         <MatExpansionPanelHeader>@resource.Title</MatExpansionPanelHeader>

@@ -13,6 +13,10 @@ else{
     <DataAnnotationsValidator/>
      <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">
                 <p>
+                    <MatTextField Label="Registered Class" @bind-Value="profile.RegisteredClass"/>
+                    <ValidationMessage For="@(() => profile.RegisteredClass)"/>
+                </p>
+                <p>
                     <MatTextField Label="Grade" @bind-Value="profile.Grade"/>
                     <ValidationMessage For="@(() => profile.Grade)"/>
                 </p>

@@ -4,6 +4,7 @@ namespace SelfService.Shared
 {
     public class HomePageResource
     {
+        public int Order {get; set;}
         public string Title { get; set; }
         public string Info { get; set; }
 
