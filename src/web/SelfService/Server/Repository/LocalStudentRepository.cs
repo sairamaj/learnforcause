@@ -77,12 +77,12 @@ namespace SelfService.Repository
             // }));
         }
 
-        public Task StartClass()
+        public Task<string> StartClass(string className)
         {
             throw new NotImplementedException();
         }
 
-        public Task StopClass()
+        public Task StopClass(string id)
         {
             throw new NotImplementedException();
         }
@@ -98,6 +98,11 @@ namespace SelfService.Repository
         }
 
         public IAsyncEnumerable<HomePageResource> GetHomePageResources()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<CurrentClassInfoEntity> GetRunningClass()
         {
             throw new NotImplementedException();
         }

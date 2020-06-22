@@ -8,26 +8,56 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SelfService.Repository;
 using SelfService.Server.Extensions;
+using SelfService.Server.Repository;
 
 namespace SelfService.Server.Controllers
 {
-    [Authorize]
+    // [Authorize]
     [ApiController]
-    [Route("[controller]")]    
+    [Route("[controller]")]
     public class AdminController
     {
-        [HttpPost]
-        [Route("class/start")]
-        public async Task StartClass()
+        private readonly ILogger<AdminController> logger;
+        private readonly IAdminRepository adminRepository;
+
+        public AdminController(
+            ILogger<AdminController> logger,
+            IAdminRepository adminRepository)
         {
-            await Task.Delay(0);
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.adminRepository = adminRepository ?? throw new ArgumentNullException(nameof(adminRepository));
         }
 
         [HttpPost]
-        [Route("class/start")]
-        public async Task StopClass()
+        [Route("class/start/{name}")]
+        public async Task<string> StartClass(string name)
         {
-            await Task.Delay(0);
-        }        
+            this.logger.LogDebug($"StartClass: {name}");
+            try
+            {
+                return await this.adminRepository.StartClass(name);
+            }
+            catch (System.Exception ex)
+            {
+                this.logger.LogError(ex, $"Error in StartClass");
+                throw;
+            }
+        }
+
+        [HttpPost]
+        [Route("class/stop/{id}")]
+        public async Task StopClass(string id)
+        {
+            this.logger.LogDebug($"StopClass: {id}");
+            try
+            {
+                await this.adminRepository.StopClass(id);
+            }
+            catch (System.Exception ex)
+            {
+                this.logger.LogError(ex, $"Error in StopClass");
+                throw;
+            }
+        }
     }
 }

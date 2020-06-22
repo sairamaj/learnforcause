@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SelfService.Server.Models;
 using SelfService.Shared;
 
-namespace SelfService.Repository
+namespace SelfService.Server.Repository
 {
     public interface IStudentRepository
     {

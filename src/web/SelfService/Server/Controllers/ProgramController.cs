@@ -48,12 +48,17 @@ namespace SelfService.Server.Controllers
         [HttpGet]
         [Route("class/current")]
         public async Task<CurrentRunningClassInfo> GetClassRunningStatus(){
-            return null;
-            // return await Task.FromResult(new CurrentRunningClassInfo{
-            //     Id = Guid.NewGuid().ToString(),
-            //     DateTime = DateTime.Now,
-            //     ClassName = "Java"
-            // });
+            
+            var runningClass = await this.adminReposiotry.GetRunningClass();
+            if( runningClass == null){
+                return null;
+            }
+
+            return new CurrentRunningClassInfo{
+                Id = runningClass.RowKey,
+                ClassName = runningClass.ClassName,
+                DateTime = runningClass.DateTime
+            };
         }
     }
 }
