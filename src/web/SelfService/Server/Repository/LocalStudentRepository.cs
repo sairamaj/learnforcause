@@ -18,23 +18,9 @@ namespace SelfService.Repository
             EnsureStorage();
         }
 
-        public async Task AddAttendance(string name, Guid classId)
+        public async Task AddAttendance(string name, string classId)
         {
-            var classIdFile = Path.Combine(LocalStorage, $"class_{classId}.json");
-            var attendances = new List<StudentAttendance>();
-            if (File.Exists(classIdFile))
-            {
-                attendances = JsonSerializer.Deserialize<IEnumerable<StudentAttendance>>(await File.ReadAllTextAsync(classIdFile)).ToList();
-            }
-
-            var found = attendances.FirstOrDefault(s => s.Name == name);
-            if (found != null)
-            {
-                return;
-            }
-
-            attendances.Add(new StudentAttendance { Name = name, DateTime = DateTime.Now });
-            await File.WriteAllTextAsync(classIdFile, JsonSerializer.Serialize(attendances));
+            throw new NotImplementedException();
         }
 
         public async Task<ProfileEntity> GetProfile(string email)
@@ -52,16 +38,9 @@ namespace SelfService.Repository
             //         (await File.ReadAllTextAsync(studentFile)));
         }
 
-        public async Task<StudentAttendance> GetAttendance(string name, Guid classId)
+        public async Task<StudentAttendanceEntity> GetAttendance(string name, string classId)
         {
-            var classIdFile = Path.Combine(LocalStorage, $"class_{classId}.json");
-            var attendances = new List<StudentAttendance>();
-            if (File.Exists(classIdFile))
-            {
-                attendances = JsonSerializer.Deserialize<IEnumerable<StudentAttendance>>(await File.ReadAllTextAsync(classIdFile)).ToList();
-            }
-
-            return attendances.FirstOrDefault(s => s.Name == name);
+            throw new NotImplementedException();
         }
 
         public Task SaveProfile(ProfileEntity profile)

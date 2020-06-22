@@ -46,14 +46,17 @@ namespace SelfService.Server.Controllers
         [Route("profile")]
         public async Task<ProfileResource> GetProfile()
         {
-            var entity =  await studentRepository.GetProfile(User.GetName());
-            if( entity == null){
-                return new ProfileResource{
+            var entity = await studentRepository.GetProfile(User.GetName());
+            if (entity == null)
+            {
+                return new ProfileResource
+                {
                     Name = User.GetName(),
                     Email = User.GetEmail()
                 };
             }
-            return new ProfileResource{
+            return new ProfileResource
+            {
                 Name = entity.Name,
                 Email = User.GetEmail(),
                 Location = entity.Location,
@@ -68,9 +71,10 @@ namespace SelfService.Server.Controllers
         [Route("profile")]
         public async Task SaveProfile(ProfileResource profile)
         {
-            await studentRepository.SaveProfile(new ProfileEntity{
+            await studentRepository.SaveProfile(new ProfileEntity
+            {
                 Name = profile.Name,
-                Location  = profile.Location,
+                Location = profile.Location,
                 Grade = profile.Grade,
                 Phone = profile.Phone,
                 GithubUrl = profile.GitUrl,
@@ -80,31 +84,39 @@ namespace SelfService.Server.Controllers
 
         [HttpPost]
         [Route("class/{id}")]
-        public async Task AddAttendance(Guid id)
+        public async Task AddAttendance(string id)
         {
             try
             {
-            this.logger.LogInformation($"AddAttendance : {id}: {User.GetName()}");
-            await this.studentRepository.AddAttendance(User.GetName(), id);
-                
+                this.logger.LogInformation($"AddAttendance : {id}: {User.GetName()}");
+                await this.studentRepository.AddAttendance(User.GetName(), id);
             }
             catch (System.Exception e)
             {
                 this.logger.LogError($"AddAttendance : {id} : error:{e}");
-               
+
                 throw;
             }
         }
 
         [HttpGet]
         [Route("class/{id}")]
-        public async Task<StudentAttendance> GetClassStatus(Guid id)
+        public async Task<StudentAttendance> GetClassStatus(string id)
         {
             this.logger.LogInformation($"GetClassStatus : {id}");
             try
             {
                 // change the return tupe so that we can send not found and other proper http status codes.
-                return await this.studentRepository.GetAttendance(User.GetName(), id);
+                var attendance = await this.studentRepository.GetAttendance(User.GetName(), id);
+                if (attendance == null)
+                {
+                    return null;
+                }
+                return new StudentAttendance
+                {
+                    DateTime = attendance.DateTime,
+                    Name = attendance.Name,
+                };
             }
             catch (System.Exception e)
             {

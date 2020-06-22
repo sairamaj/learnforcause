@@ -24,19 +24,28 @@ namespace SelfService.Server.Repository
         public async Task SaveProfile(ProfileEntity entity)
         {
             var table =  await GetTable("student");
-            await table.CreateIfNotExistsAsync();
             var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
             await table.ExecuteAsync(insertOrMergeOperation);
         }
 
-        public Task AddAttendance(string name, Guid classId)
+        public async Task AddAttendance(string name, string classId)
         {
-            throw new NotImplementedException();
+            var table =  await GetTable("student");
+            var insertOrMergeOperation = TableOperation.InsertOrMerge(new StudentAttendanceEntity{
+               PartitionKey = classId,
+               RowKey = name,
+               DateTime = DateTime.Now 
+            });
+
+            await table.ExecuteAsync(insertOrMergeOperation);
         }
 
-        public Task<StudentAttendance> GetAttendance(string name, Guid classId)
+        public async Task<StudentAttendanceEntity> GetAttendance(string name, string classId)
         {
-            return Task.FromResult<StudentAttendance>(null);
+             var table =  await GetTable("student");
+            var retrieveOperation = TableOperation.Retrieve<StudentAttendanceEntity>(classId, name);
+            var result = await table.ExecuteAsync(retrieveOperation);
+            return result.Result as StudentAttendanceEntity;
         }
     }
 }
