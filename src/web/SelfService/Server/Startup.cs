@@ -11,6 +11,7 @@ using System.Linq;
 using SelfService.Repository;
 using SelfService.Server.Models;
 using SelfService.Server.Repository;
+using SelfService.Server.Middleware;
 
 namespace SelfService.Server
 {
@@ -61,6 +62,7 @@ namespace SelfService.Server
             app.UseRouting();
 
             app.UseAuthentication();
+            app.UseAssignGroup();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

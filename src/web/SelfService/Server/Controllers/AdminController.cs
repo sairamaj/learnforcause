@@ -12,7 +12,7 @@ using SelfService.Server.Repository;
 
 namespace SelfService.Server.Controllers
 {
-    // [Authorize]
+    [Authorize(Roles="Administrators")]
     [ApiController]
     [Route("[controller]")]
     public class AdminController

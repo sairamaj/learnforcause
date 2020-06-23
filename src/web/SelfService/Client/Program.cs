@@ -30,6 +30,8 @@ namespace SelfService.Client
                 options.ProviderOptions.DefaultAccessTokenScopes.Add("https://sairamaapps.onmicrosoft.com/baf19ef3-9a3e-46e6-837e-008071b3bd36/user_impersonation");
             });
 
+            //builder.Services.AddAuthorizationCore(options => options.AddAppPolicies());
+
             await builder.Build().RunAsync();
         }
     }

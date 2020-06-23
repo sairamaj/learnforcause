@@ -1,0 +1,74 @@
+@page "/admindata"
+
+@using SelfService.Shared
+@using System.Linq
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@inject HttpClient Http
+
+
+<MatButton Raised="true" OnClick="@GetRunningClass" style="float: center">Get Running Class</MatButton>
+@if( currentRunningClass != null){
+    <span>id:</span> <span>@currentRunningClass.Id</span><br/>
+    <span>ClassName>:</span> <span>@currentRunningClass.ClassName</span><br/>
+    <span>DateTime:</span> <span>@currentRunningClass.DateTime</span><br/>
+}else{
+    <span>No class found!</span>
+}
+<br/>
+<br/>
+<MatButton Raised="true" OnClick="@StartClass" style="float: center">Start Class</MatButton>
+<br/>
+<br/>
+<MatButton Raised="true" OnClick="@StopClass" style="float: center">Stop Class</MatButton>
+@if(!String.IsNullOrWhiteSpace(error))
+{
+    @error
+}
+
+@code
+{
+    CurrentRunningClassInfo currentRunningClass;
+    string error = null;
+
+    async Task GetRunningClass()
+    {
+        currentRunningClass = null;
+        try
+        {
+            currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
+        }
+        catch (Exception e)
+        {
+            // Ignore for now.
+            System.Console.WriteLine($"Error: {e}");
+        }
+    }
+
+    async Task StartClass()
+    {
+        try
+        {
+            var response =  await Http.PostAsync($"admin/class/start/java", new StringContent(""));
+            response.EnsureSuccessStatusCode();
+            await GetRunningClass();
+        }
+        catch (Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    async Task StopClass()
+    {
+        try
+        {
+            var response = await Http.PostAsync($"admin/class/stop/{currentRunningClass.Id}", new StringContent(""));
+            response.EnsureSuccessStatusCode();
+            await GetRunningClass();
+        }
+        catch (Exception e)
+        {
+            error = e.Message;
+        }
+    }
+}
