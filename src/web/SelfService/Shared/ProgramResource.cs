@@ -5,6 +5,6 @@ namespace SelfService.Shared
 {
     public class ProgramResource
     {
-        public IEnumerable<HomePageResource> Resources {get; set;}
+        public IEnumerable<Resource> Resources {get; set;}
     }
 }

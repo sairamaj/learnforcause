@@ -85,5 +85,10 @@ namespace SelfService.Repository
         {
             throw new NotImplementedException();
         }
+
+        public IAsyncEnumerable<Resource> GetResources(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

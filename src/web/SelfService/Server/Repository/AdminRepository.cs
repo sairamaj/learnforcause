@@ -20,23 +20,6 @@ namespace SelfService.Server.Repository
             this.environment = environment ?? throw new System.ArgumentNullException(nameof(environment));
         }
 
-        public async IAsyncEnumerable<HomePageResource> GetHomePageResources()
-        {
-            var homePageResources = Path.Combine(this.environment.WebRootPath, "Resources", "HomePage");
-            foreach (var file in Directory.GetFiles(homePageResources, "*.MD"))
-            {
-                var title = Path.GetFileNameWithoutExtension(file);
-                var orderInfo = title.Split('_').First();
-                title = title.Substring(orderInfo.Length + 1);
-                yield return new HomePageResource
-                {
-                    Order = System.Convert.ToInt32(orderInfo),
-                    Title = title,
-                    Info = await File.ReadAllTextAsync(file)
-                };
-            }
-        }
-
         public async Task<CurrentClassInfoEntity> GetRunningClass()
         {
             var table = await GetTable("program");
@@ -83,6 +66,23 @@ namespace SelfService.Server.Repository
             entity.IsRunning = false;
             var saveOperation = TableOperation.InsertOrMerge(entity);
             await table.ExecuteAsync(saveOperation);
+        }
+
+        public async IAsyncEnumerable<Resource> GetResources(string name)
+        {
+            var homePageResources = Path.Combine(this.environment.WebRootPath, "Resources", name);
+            foreach (var file in Directory.GetFiles(homePageResources, "*.MD"))
+            {
+                var title = Path.GetFileNameWithoutExtension(file);
+                var orderInfo = title.Split('_').First();
+                title = title.Substring(orderInfo.Length + 1);
+                yield return new Resource
+                {
+                    Order = System.Convert.ToInt32(orderInfo),
+                    Title = title,
+                    Info = await File.ReadAllTextAsync(file)
+                };
+            }
         }
     }
 }

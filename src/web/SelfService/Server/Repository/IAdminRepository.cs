@@ -10,7 +10,6 @@ namespace SelfService.Server.Repository
         Task<string> StartClass(string className);
         Task StopClass(string id);
         Task<CurrentClassInfoEntity> GetRunningClass();
-
-        IAsyncEnumerable<HomePageResource> GetHomePageResources();
+        IAsyncEnumerable<Resource> GetResources(string name);
     }
 }

@@ -1,9 +1,7 @@
 using SelfService.Shared;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SelfService.Server.Repository;
@@ -19,22 +17,25 @@ namespace SelfService.Server.Controllers
 
         public ProgramController(
             ILogger<ProgramController> logger,
-            IAdminRepository adminReposiotry )
+            IAdminRepository adminReposiotry)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.adminReposiotry = adminReposiotry ?? throw new ArgumentNullException(nameof(adminReposiotry));
         }
+
         [HttpGet]
         public async Task<ProgramResource> Get()
         {
             this.logger.LogInformation("Get...");
             try
             {
-                var homePageResoures = new List<HomePageResource>();
-                await foreach(var resource in this.adminReposiotry.GetHomePageResources())              {
+                var homePageResoures = new List<Resource>();
+                await foreach (var resource in this.adminReposiotry.GetResources("HomePage"))
+                {
                     homePageResoures.Add(resource);
                 }
-                return new ProgramResource{
+                return new ProgramResource
+                {
                     Resources = homePageResoures
                 };
             }
@@ -47,18 +48,28 @@ namespace SelfService.Server.Controllers
 
         [HttpGet]
         [Route("class/current")]
-        public async Task<CurrentRunningClassInfo> GetClassRunningStatus(){
-            
+        public async Task<CurrentRunningClassInfo> GetClassRunningStatus()
+        {
+
             var runningClass = await this.adminReposiotry.GetRunningClass();
-            if( runningClass == null){
+            if (runningClass == null)
+            {
                 return null;
             }
 
-            return new CurrentRunningClassInfo{
+            return new CurrentRunningClassInfo
+            {
                 Id = runningClass.RowKey,
                 ClassName = runningClass.ClassName,
                 DateTime = runningClass.DateTime
             };
+        }
+
+        [HttpGet]
+        [Route("resources/{name}")]
+        public IAsyncEnumerable<Resource> GetResources(string name)
+        {
+            return this.adminReposiotry.GetResources(name);
         }
     }
 }
