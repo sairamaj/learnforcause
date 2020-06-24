@@ -18,12 +18,12 @@ namespace SelfService.Repository
             EnsureStorage();
         }
 
-        public async Task AddAttendance(string name, string classId)
+        public Task AddAttendance(string name, string classId)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<ProfileEntity> GetProfile(string email)
+        public Task<ProfileEntity> GetProfile(string email)
         {
             throw new NotImplementedException();
             // var studentFile = Path.Combine(LocalStorage, email);
@@ -38,7 +38,7 @@ namespace SelfService.Repository
             //         (await File.ReadAllTextAsync(studentFile)));
         }
 
-        public async Task<StudentAttendanceEntity> GetAttendance(string name, string classId)
+        public Task<StudentAttendanceEntity> GetAttendance(string name, string classId)
         {
             throw new NotImplementedException();
         }

@@ -5,67 +5,28 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject HttpClient Http
 
-@if( program == null)
-{
-    <p><em>Loading...</em></p>
-}
-else{
-    @if( currentRunningClass != null){
-        if( currentAttendance == null){
-            <MatButton Raised="true" OnClick="@AddAttendance" style="float: right">Add Attendance</MatButton>
-            <br/>
-            <br/>
-        }else{
-            <b><span style="float: right">Attending @currentRunningClass.ClassName @currentAttendance.DateTime</span></b>
-        }
+@if( currentRunningClass != null){
+    if( currentAttendance == null){
+        <MatButton Raised="true" OnClick="@AddAttendance" style="float: right">Add Attendance</MatButton>
+        <br/>
+        <br/>
+    }else{
+        <b><span style="float: right">Attending @currentRunningClass.ClassName @currentAttendance.DateTime</span></b>
     }
-    <MatAccordion Multi="true">
-        @foreach(var resource in program.Resources.OrderBy(r=> r.Order)){
-<MatExpansionPanel>
-                    <MatExpansionPanelSummary>
-                        <MatExpansionPanelHeader>@resource.Title</MatExpansionPanelHeader>
-                    </MatExpansionPanelSummary>
-                    <MatExpansionPanelDetails>
-                        <p>@((MarkupString) @resource.InfoAsMarkdown)</p>
-                    </MatExpansionPanelDetails>
-                </MatExpansionPanel>            
-        }
-    </MatAccordion>
 }
+
+<ResourceViewComponent ResourceName="homepage" />        
+
 
 @code{
-    ProgramResource program;
     CurrentRunningClassInfo currentRunningClass;
     StudentAttendance currentAttendance;
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            program = await Http.GetFromJsonAsync<ProgramResource>("program");
-            try
-            {
-                currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
-                if (currentRunningClass != null)
-                {
-                    currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
-                }
-            }
-            catch (Exception e)
-            {
-                // Ignore for now.
-                System.Console.WriteLine($"Error: {e}");
-            }
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
-    }
 
     private async Task AddAttendance()
     {
         await Http.PostAsync($"student/class/{currentRunningClass.Id}", new StringContent(string.Empty));
         currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
     }
+
+
 }
