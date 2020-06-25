@@ -25,10 +25,22 @@
     @error
 }
 
+<MatButton Raised="true" OnClick="@GetRegisteredStudents" style="float: center">Registered Students</MatButton>
+
+@if (students != null){
+<MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                <td>@context.Name</td>
+                <td><a href="@context.GithubUrl">@context.GithubUrl</a></td>
+            </MatTableRow>
+        </MatTable>
+
+}
 @code
 {
     CurrentRunningClassInfo currentRunningClass;
     string error = null;
+    IEnumerable<SelfService.Shared.Student> students;
 
     async Task GetRunningClass()
     {
@@ -67,6 +79,17 @@
             await GetRunningClass();
         }
         catch (Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    async Task GetRegisteredStudents(){
+        try
+        {
+            students = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students")).OrderBy(s => s.Name);
+        }
+        catch (System.Exception e)
         {
             error = e.Message;
         }

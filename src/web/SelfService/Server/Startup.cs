@@ -30,6 +30,7 @@ namespace SelfService.Server
         {
             services.AddTransient<IStudentRepository, AzureStudentRepository>();
             services.AddTransient<IAdminRepository, AdminRepository>();
+            services.AddTransient<IGraphRepository, GraphRepository>();
             services.AddAuthentication(AzureADB2CDefaults.BearerAuthenticationScheme)
                 .AddAzureADB2CBearer(options => Configuration.Bind("AzureAdB2C", options));
 

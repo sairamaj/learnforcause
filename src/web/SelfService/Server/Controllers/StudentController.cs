@@ -30,19 +30,6 @@ namespace SelfService.Server.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Student> Get()
-        {
-            return new List<Student>{
-                new Student { Name = "sai", Age = 16, Email = "sairamaj@hotmail.com",
-                Grade = "10th", Phone = "5035332071"
-
-                },
-                new Student { Name = "ram"},
-                new Student { Name = "krishna"}
-            };
-        }
-
-        [HttpGet]
         [Route("profile")]
         public async Task<ProfileResource> GetProfile()
         {

@@ -12,20 +12,26 @@ using SelfService.Server.Repository;
 
 namespace SelfService.Server.Controllers
 {
-    [Authorize(Roles="Administrators")]
+    [Authorize(Roles = "Administrators")]
     [ApiController]
     [Route("[controller]")]
     public class AdminController
     {
         private readonly ILogger<AdminController> logger;
+        private readonly IGraphRepository graphRepository;
         private readonly IAdminRepository adminRepository;
+        private readonly IStudentRepository studentRepository;
 
         public AdminController(
             ILogger<AdminController> logger,
-            IAdminRepository adminRepository)
+            IGraphRepository graphRepository,
+            IAdminRepository adminRepository,
+            IStudentRepository studentRepository)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.graphRepository = graphRepository ?? throw new ArgumentNullException(nameof(graphRepository));
             this.adminRepository = adminRepository ?? throw new ArgumentNullException(nameof(adminRepository));
+            this.studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
         }
 
         [HttpPost]
@@ -57,6 +63,22 @@ namespace SelfService.Server.Controllers
             {
                 this.logger.LogError(ex, $"Error in StopClass");
                 throw;
+            }
+        }
+
+        [HttpGet]
+        [Route("students")]
+        public async IAsyncEnumerable<Student> GetStudents()
+        {
+            await foreach (var u in this.graphRepository.GetUsers())
+            {
+                var profile = await this.studentRepository.GetProfile(u.Name);
+                yield return new Student
+                {
+                    Name = u.Name,
+                    Email = u.Email,
+                    GithubUrl = profile?.GithubUrl
+                };
             }
         }
     }

@@ -84,5 +84,10 @@ namespace SelfService.Server.Repository
                 };
             }
         }
+
+        public IAsyncEnumerable<Student> GetStudents(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

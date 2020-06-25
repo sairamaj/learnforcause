@@ -21,7 +21,8 @@ namespace SelfService.Server.Middleware
         {
             await Task.Delay(0);
             this.logger.LogInformation($"InvokeAsync ...{context.User.GetEmail()}");
-            if( context.User.GetEmail() == "sairamaj@gmail.com")
+            if( context.User.GetEmail() == "sairamaj@gmail.com"
+            || context.User.GetEmail() == "srijamalapuram@gmail.com")
             {
                 this.logger.LogInformation("Adding administrators role");
                 ((ClaimsIdentity)context.User.Identity)
