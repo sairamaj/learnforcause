@@ -1,7 +1,7 @@
 ﻿@page "/"
 
 @using SelfService.Shared
-@using System.Linq
+@using System.Linq  
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject HttpClient Http
 
@@ -26,17 +26,17 @@
     {
         try
         {
-            currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
-            if (currentRunningClass != null)
+            try
             {
-                try
+                currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
+                if (currentRunningClass != null)
                 {
                     currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
                 }
-                catch (Exception)
-                {
-                    // Ignore for now.
-                }
+            }
+            catch (Exception)
+            {
+                // Ignore for now.
             }
         }
         catch (AccessTokenNotAvailableException exception)
