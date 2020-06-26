@@ -22,6 +22,29 @@
     CurrentRunningClassInfo currentRunningClass;
     StudentAttendance currentAttendance;
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
+            if (currentRunningClass != null)
+            {
+                try
+                {
+                    currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
+                }
+                catch (Exception)
+                {
+                    // Ignore for now.
+                }
+            }
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
     private async Task AddAttendance()
     {
         await Http.PostAsync($"student/class/{currentRunningClass.Id}", new StringContent(string.Empty));
