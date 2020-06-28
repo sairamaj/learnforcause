@@ -92,17 +92,55 @@ namespace SelfService.Server.Repository
 
         public async IAsyncEnumerable<ClassInfoEntity> GetClasses(string name)
         {
-             var table = await GetTable("program");
+            var table = await GetTable("program");
             TableContinuationToken continuationToken = null;
-            do{
+            do
+            {
                 var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery<ClassInfoEntity>(), continuationToken);
-                foreach(var result in queryResult){
+                foreach (var result in queryResult)
+                {
                     yield return result;
                 }
-                
+
                 continuationToken = queryResult.ContinuationToken;
-            }while(continuationToken != null);
-            
-       }
+            } while (continuationToken != null);
+
+        }
+
+        public async Task<string> AddHomeWorkPoint(string description, int numberofPoints)
+        {
+            var table = await GetTable("program");
+            var entity = new HomeworkPointEntity
+            {
+                PartitionKey = "homeworkpoint",
+                RowKey = Guid.NewGuid().ToString(),
+                Description = description,
+                NumberofPoints = numberofPoints
+            };
+
+            var insertOrMergeOperation = TableOperation.Insert(entity);
+            await table.ExecuteAsync(insertOrMergeOperation);
+            return entity.RowKey;
+        }
+
+        public async IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints(string name)
+        {
+            var table = await GetTable("program");
+            TableContinuationToken continuationToken = null;
+            string filter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "homeworkpoint");
+
+            do
+            {
+                var queryResult = await table.ExecuteQuerySegmentedAsync(
+                    new TableQuery<HomeworkPointEntity>().Where(filter),
+                continuationToken);
+                foreach (var result in queryResult)
+                {
+                    yield return result;
+                }
+
+                continuationToken = queryResult.ContinuationToken;
+            } while (continuationToken != null);
+        }
     }
 }

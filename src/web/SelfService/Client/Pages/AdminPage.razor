@@ -27,7 +27,11 @@
 }
 
 <MatButton Raised="true" OnClick="@GetRegisteredStudents" style="float: center">Registered Students</MatButton>
+<br/>
 <MatButton Raised="true" OnClick="@GetClasses" style="float: center">Get Classes</MatButton>
+<br/>
+<MatButton Raised="true" OnClick="@GetHomeworkPoints" style="float: center">Get Homework points</MatButton>
+<br/>
 
 @if (students != null){
 <MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
@@ -46,12 +50,22 @@
         </MatTable>
 }
 
+@if (homeworkpoints != null){
+<MatTable Items="@homeworkpoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                <td>@context.Description</td>
+                <td>@context.NumberofPoints</td>
+            </MatTableRow>
+        </MatTable>
+}
+
 @code
 {
     CurrentRunningClassInfo currentRunningClass;
     string error = null;
     IEnumerable<SelfService.Shared.Student> students;
     IEnumerable<SelfService.Shared.ClassInfo> classes;
+    IEnumerable<SelfService.Shared.HomeworkPoint> homeworkpoints;
 
     async Task GetRunningClass()
     {
@@ -113,6 +127,19 @@
         {
             classes = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.ClassInfo>>("admin/classes"))
                 .OrderByDescending(s => s.DateTime);
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    async Task GetHomeworkPoints()
+    {
+        try
+        {
+            homeworkpoints = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.HomeworkPoint>>("admin/homeworkpoints"))
+                .OrderBy(s => s.Description);
         }
         catch (System.Exception e)
         {

@@ -86,11 +86,44 @@ namespace SelfService.Server.Controllers
         [Route("classes")]
         public async IAsyncEnumerable<ClassInfo> GetClasses()
         {
-            await foreach(var entity in this.adminRepository.GetClasses("")){
-                yield return new ClassInfo{
+            await foreach (var entity in this.adminRepository.GetClasses(""))
+            {
+                yield return new ClassInfo
+                {
                     ClassName = entity.ClassName,
-                  DateTime = entity.DateTime,
-                  Id = entity.Id
+                    DateTime = entity.DateTime,
+                    Id = entity.Id
+                };
+            }
+        }
+
+        [HttpPost]
+        [Route("homeworkpoints/{description}/{numberOfPoints:int}")]
+        public async Task AddHomeworkPoint(string description, int numberOfPoints)
+        {
+            this.logger.LogDebug($"AddHomeworkPoint: {description} {numberOfPoints}");
+            try
+            {
+                await this.adminRepository.AddHomeWorkPoint(description, numberOfPoints);
+            }
+            catch (System.Exception ex)
+            {
+                this.logger.LogError(ex, $"Error AddHomeworkPoint");
+                throw;
+            }
+        }
+
+        [HttpGet]
+        [Route("homeworkpoints")]
+        public async IAsyncEnumerable<HomeworkPoint> GetHomeworkPoints(string description, int numberOfPoints)
+        {
+            await foreach (var entity in this.adminRepository.GetHomeworkPoints(""))
+            {
+                yield return new HomeworkPoint
+                {
+                    Id = entity.Id,
+                    Description = entity.Description,
+                    NumberofPoints = entity.NumberofPoints
                 };
             }
         }

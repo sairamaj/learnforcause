@@ -100,5 +100,15 @@ namespace SelfService.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task<string> AddHomeWorkPoint(string description, int pointCount)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
