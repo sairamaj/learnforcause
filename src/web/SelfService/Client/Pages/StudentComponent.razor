@@ -1,0 +1,41 @@
+@using SelfService.Shared
+@using System.Linq
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<MatButton Raised="true" OnClick="@GetRegisteredStudents" style="float: center">Registered Students</MatButton>
+
+@if (students != null){
+<MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                <td>@context.Name</td>
+                <td><a href="@context.GithubUrl">@context.GithubUrl</a></td>
+                <td><MatButton OnClick="@(e => AddPointsToStudent(@context.Id))" style="float: center">Add Points</MatButton></td>
+            </MatTableRow>
+        </MatTable>
+}
+
+@code {
+    IEnumerable<SelfService.Shared.Student> students;
+    AddStudentPoints addStudentPoints = new AddStudentPoints();
+
+    string error = string.Empty;
+
+    async Task GetRegisteredStudents()
+    {
+        try
+        {
+            students = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students")).OrderBy(s => s.Name);
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    void AddPointsToStudent(string id)
+    {
+        NavigationManager.NavigateTo($"addstudentpoints/{id}");
+    }
+
+}`  

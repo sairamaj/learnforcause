@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
@@ -141,6 +142,38 @@ namespace SelfService.Server.Repository
 
                 continuationToken = queryResult.ContinuationToken;
             } while (continuationToken != null);
+        }
+
+        public async Task AddStudentHomeworkPoints(string studentId, IEnumerable<string> homeworkIds)
+        {
+             var table = await GetTable("student");
+             var entity = new StudentHomeworkPointEntity{
+                 PartitionKey = "studenthomework",
+                 StudentId = studentId,
+                 HomeworkPointIds = JsonSerializer.Serialize(homeworkIds)
+             };
+
+            var insertOrMergeOperation = TableOperation.InsertOrReplace(entity);
+            await table.ExecuteAsync(insertOrMergeOperation);
+       }
+
+        public async Task<IEnumerable<string>> GetStudentHomeworkPoints(string studentId)
+        {
+             var table = await GetTable("student");
+            TableContinuationToken continuationToken = null;
+            var filter = TableQuery.CombineFilters(
+                TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "studenthomework"),
+                TableOperators.And,
+                TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, studentId.ToString()));
+
+            var result = await table.ExecuteQuerySegmentedAsync(new TableQuery<StudentHomeworkPointEntity>()
+            .Where(filter), continuationToken);
+            if (result.Results != null && result.Results.FirstOrDefault() != null)
+            {
+                return JsonSerializer.Deserialize<IEnumerable<string>>(result.Results.FirstOrDefault().HomeworkPointIds);
+            }
+
+            return new List<string>();
         }
     }
 }

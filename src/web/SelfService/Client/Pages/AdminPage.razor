@@ -1,4 +1,4 @@
-@page "/admindata"
+@page "/admin"
 
 @using SelfService.Shared
 @using System.Linq
@@ -26,21 +26,14 @@
     @error
 }
 
-<MatButton Raised="true" OnClick="@GetRegisteredStudents" style="float: center">Registered Students</MatButton>
 <br/>
 <MatButton Raised="true" OnClick="@GetClasses" style="float: center">Get Classes</MatButton>
 <br/>
 <MatButton Raised="true" OnClick="@GetHomeworkPoints" style="float: center">Get Homework points</MatButton>
 <br/>
 
-@if (students != null){
-<MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
-            <MatTableRow>
-                <td>@context.Name</td>
-                <td><a href="@context.GithubUrl">@context.GithubUrl</a></td>
-            </MatTableRow>
-        </MatTable>
-}
+<StudentComponent />
+
 @if (classes != null){
 <MatTable Items="@classes" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
@@ -63,7 +56,6 @@
 {
     CurrentRunningClassInfo currentRunningClass;
     string error = null;
-    IEnumerable<SelfService.Shared.Student> students;
     IEnumerable<SelfService.Shared.ClassInfo> classes;
     IEnumerable<SelfService.Shared.HomeworkPoint> homeworkpoints;
 
@@ -104,18 +96,6 @@
             await GetRunningClass();
         }
         catch (Exception e)
-        {
-            error = e.Message;
-        }
-    }
-
-    async Task GetRegisteredStudents()
-    {
-        try
-        {
-            students = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students")).OrderBy(s => s.Name);
-        }
-        catch (System.Exception e)
         {
             error = e.Message;
         }

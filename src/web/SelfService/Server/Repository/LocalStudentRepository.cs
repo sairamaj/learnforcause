@@ -110,5 +110,15 @@ namespace SelfService.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task AddStudentHomeworkPoints(string studentId, IEnumerable<string> homeworkIds)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<string>> GetStudentHomeworkPoints(string studentId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

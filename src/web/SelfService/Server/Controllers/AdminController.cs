@@ -75,6 +75,7 @@ namespace SelfService.Server.Controllers
                 var profile = await this.studentRepository.GetProfile(u.Name);
                 yield return new Student
                 {
+                    Id = u.Id,
                     Name = u.Name,
                     Email = u.Email,
                     GithubUrl = profile?.GithubUrl
@@ -126,6 +127,22 @@ namespace SelfService.Server.Controllers
                     NumberofPoints = entity.NumberofPoints
                 };
             }
+        }
+
+        [HttpGet]
+        [Route("student/homeworkpoints/{studentId}")]
+        public async Task<IEnumerable<string>> GetStudentHomeworkPoints(string studentId)
+        {
+            return await this.adminRepository.GetStudentHomeworkPoints(studentId);
+        }
+
+        [HttpPost]
+        [Route("student/homeworkpoints/{studentId}")]
+        public async Task AddStudentHomeworkPoints(
+            [FromRoute] string studentId,
+            IEnumerable<string> homeworkIds)
+        {
+            await this.adminRepository.AddStudentHomeworkPoints(studentId, homeworkIds);
         }
     }
 }

@@ -1,0 +1,98 @@
+@page "/addstudentpoints/{id}"
+@using SelfService.Shared
+@using System.Linq
+@inject HttpClient Http
+
+<MatButton Raised="true" OnClick="@OnUpdate" style="float: right">Update</MatButton>
+@if (studentHomeworkPoints != null){
+<MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                <td><MatCheckbox 
+                @bind-Value="@context.IsDone" 
+                @onclick="@(e => OnClick(@context))"
+                Label="@(getLabel(@context))"
+                @onchange="@OnChange"
+                ></MatCheckbox></td>
+                <td>@context.HomeworkPoint.Description</td>
+                <td>@context.HomeworkPoint.NumberofPoints</td>
+            </MatTableRow>
+        </MatTable>
+}
+
+@code
+{
+    [Parameter]
+    public string Id { get; set; }
+    string error;
+    IEnumerable<StudentHomeworkPoint> studentHomeworkPoints;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Get all home works ids
+            var homeworkIds = await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{Id}");
+            studentHomeworkPoints = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.HomeworkPoint>>("admin/homeworkpoints"))
+                .OrderBy(s => s.Description)
+                .Select(s =>
+                {
+                    var homeworkPoint = new StudentHomeworkPoint
+                    {
+                        HomeworkPoint = s
+                    };
+
+                    homeworkPoint.IsDone = homeworkIds.FirstOrDefault(id => id == s.Id) != null;
+                    return homeworkPoint;
+                });
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    string getLabel(StudentHomeworkPoint info)
+    {
+        System.Console.WriteLine($"val: {info.HomeworkPoint.Description} {info.IsDone}");
+        return !info.IsDone ? "Still not done" : "Done";
+    }
+
+    void DoneChanged()
+    {
+        System.Console.WriteLine("Done changed!!!!");
+    }
+
+    void OnChange(ChangeEventArgs e)
+    {
+        System.Console.WriteLine("On Change...");
+    }
+
+    void OnClick(StudentHomeworkPoint info)
+    {
+        studentHomeworkPoints = studentHomeworkPoints.Select(s =>
+        {
+            if (s.HomeworkPoint.Id == info.HomeworkPoint.Id)
+            {
+                s.IsDone = !info.IsDone;
+            }
+
+            return s;
+        });
+    }
+
+    async Task OnUpdate()
+    {
+        try
+        {
+            var doneHomeworkIds = studentHomeworkPoints.Where(s => s.IsDone).Select(s => s.HomeworkPoint.Id);
+            await Http.PostAsJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{Id}", doneHomeworkIds);
+
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+}
+
+ 
