@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inject HttpClient Http
 
+@attribute [Microsoft.AspNetCore.Authorization.Authorize()]
 
 <MatButton Raised="true" OnClick="@GetRunningClass" style="float: center">Get Running Class</MatButton>
 @if( currentRunningClass != null){
@@ -26,6 +27,7 @@
 }
 
 <MatButton Raised="true" OnClick="@GetRegisteredStudents" style="float: center">Registered Students</MatButton>
+<MatButton Raised="true" OnClick="@GetClasses" style="float: center">Get Classes</MatButton>
 
 @if (students != null){
 <MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
@@ -34,13 +36,22 @@
                 <td><a href="@context.GithubUrl">@context.GithubUrl</a></td>
             </MatTableRow>
         </MatTable>
-
 }
+@if (classes != null){
+<MatTable Items="@classes" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                <td>@context.ClassName</td>
+                <td>@context.DateTime</td>
+            </MatTableRow>
+        </MatTable>
+}
+
 @code
 {
     CurrentRunningClassInfo currentRunningClass;
     string error = null;
     IEnumerable<SelfService.Shared.Student> students;
+    IEnumerable<SelfService.Shared.ClassInfo> classes;
 
     async Task GetRunningClass()
     {
@@ -60,7 +71,7 @@
     {
         try
         {
-            var response =  await Http.PostAsync($"admin/class/start/java", new StringContent(""));
+            var response = await Http.PostAsync($"admin/class/start/java", new StringContent(""));
             response.EnsureSuccessStatusCode();
             await GetRunningClass();
         }
@@ -84,10 +95,24 @@
         }
     }
 
-    async Task GetRegisteredStudents(){
+    async Task GetRegisteredStudents()
+    {
         try
         {
             students = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students")).OrderBy(s => s.Name);
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    async Task GetClasses()
+    {
+        try
+        {
+            classes = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.ClassInfo>>("admin/classes"))
+                .OrderByDescending(s => s.DateTime);
         }
         catch (System.Exception e)
         {

@@ -95,5 +95,10 @@ namespace SelfService.Repository
         {
             throw new NotImplementedException();
         }
+
+        public IAsyncEnumerable<ClassInfoEntity> GetClasses(string name)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

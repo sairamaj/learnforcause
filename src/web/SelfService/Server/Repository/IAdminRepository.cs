@@ -12,5 +12,6 @@ namespace SelfService.Server.Repository
         Task<CurrentClassInfoEntity> GetRunningClass();
         IAsyncEnumerable<Resource> GetResources(string name);
         IAsyncEnumerable<Student> GetStudents(string name);
+        IAsyncEnumerable<ClassInfoEntity> GetClasses(string name);
     }
 }

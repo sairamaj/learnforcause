@@ -89,5 +89,20 @@ namespace SelfService.Server.Repository
         {
             throw new NotImplementedException();
         }
+
+        public async IAsyncEnumerable<ClassInfoEntity> GetClasses(string name)
+        {
+             var table = await GetTable("program");
+            TableContinuationToken continuationToken = null;
+            do{
+                var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery<ClassInfoEntity>(), continuationToken);
+                foreach(var result in queryResult){
+                    yield return result;
+                }
+                
+                continuationToken = queryResult.ContinuationToken;
+            }while(continuationToken != null);
+            
+       }
     }
 }

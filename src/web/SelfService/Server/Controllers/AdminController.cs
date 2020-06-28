@@ -81,5 +81,18 @@ namespace SelfService.Server.Controllers
                 };
             }
         }
+
+        [HttpGet]
+        [Route("classes")]
+        public async IAsyncEnumerable<ClassInfo> GetClasses()
+        {
+            await foreach(var entity in this.adminRepository.GetClasses("")){
+                yield return new ClassInfo{
+                    ClassName = entity.ClassName,
+                  DateTime = entity.DateTime,
+                  Id = entity.Id
+                };
+            }
+        }
     }
 }
