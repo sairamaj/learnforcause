@@ -13,10 +13,10 @@ namespace SelfService.Server.Repository
         {
         }
 
-        public async Task<ProfileEntity> GetProfile(string name)
+        public async Task<ProfileEntity> GetProfile(string id)
         {
             var table =  await GetTable("student");
-            var retrieveOperation = TableOperation.Retrieve<ProfileEntity>(name, name);
+            var retrieveOperation = TableOperation.Retrieve<ProfileEntity>("profile", id);
             var result = await table.ExecuteAsync(retrieveOperation);
             return result.Result as ProfileEntity;
         }

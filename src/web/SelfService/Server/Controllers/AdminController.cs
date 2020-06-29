@@ -72,13 +72,13 @@ namespace SelfService.Server.Controllers
         {
             await foreach (var u in this.graphRepository.GetUsers())
             {
-                var profile = await this.studentRepository.GetProfile(u.Name);
+                var profile = await this.studentRepository.GetProfile(u.Id);
                 yield return new Student
                 {
                     Id = u.Id,
                     Name = u.Name,
                     Email = u.Email,
-                    GithubUrl = profile?.GithubUrl
+                    GithubUrl = profile?.GithubUrl,
                 };
             }
         }
@@ -143,6 +143,8 @@ namespace SelfService.Server.Controllers
             IEnumerable<string> homeworkIds)
         {
             await this.adminRepository.AddStudentHomeworkPoints(studentId, homeworkIds);
+            // Update homework points
+            //this.studentRepository.GetProfile();
         }
     }
 }

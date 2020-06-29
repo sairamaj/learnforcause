@@ -54,12 +54,7 @@
     string getLabel(StudentHomeworkPoint info)
     {
         System.Console.WriteLine($"val: {info.HomeworkPoint.Description} {info.IsDone}");
-        return !info.IsDone ? "Still not done" : "Done";
-    }
-
-    void DoneChanged()
-    {
-        System.Console.WriteLine("Done changed!!!!");
+        return !info.IsDone ? "Not done" : "Done";
     }
 
     void OnChange(ChangeEventArgs e)

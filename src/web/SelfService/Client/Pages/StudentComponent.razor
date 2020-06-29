@@ -3,9 +3,18 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-<MatButton Raised="true" OnClick="@GetRegisteredStudents" style="float: center">Registered Students</MatButton>
+@using SelfService.Shared
 
-@if (students != null){
+<MatButton Raised="true" OnClick="@Refresh" style="float: right">Refresh</MatButton>
+
+@if( error != null){
+    <span>@error</span>
+}
+
+@if (students == null){
+    <em>Loading ...</em>
+}
+else{
 <MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
                 <td>@context.Name</td>
@@ -21,11 +30,25 @@
 
     string error = string.Empty;
 
-    async Task GetRegisteredStudents()
+    protected override async Task OnInitializedAsync()
     {
         try
         {
-            students = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students")).OrderBy(s => s.Name);
+            await Refresh();
+        }
+        catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+
+    }
+
+    async Task Refresh()
+    {
+        try
+        {
+            students = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"))
+                .OrderBy(s => s.Name);
         }
         catch (System.Exception e)
         {

@@ -175,5 +175,13 @@ namespace SelfService.Server.Repository
 
             return new List<string>();
         }
+
+        public async Task<ProfileEntity> GetProfile(string id)
+        {
+             var table =  await GetTable("student");
+            var retrieveOperation = TableOperation.Retrieve<ProfileEntity>("student", id);
+            var result = await table.ExecuteAsync(retrieveOperation);
+            return result.Result as ProfileEntity;
+       }
     }
 }

@@ -33,17 +33,19 @@ namespace SelfService.Server.Controllers
         [Route("profile")]
         public async Task<ProfileResource> GetProfile()
         {
-            var entity = await studentRepository.GetProfile(User.GetName());
+            var entity = await studentRepository.GetProfile(User.GetId());
             if (entity == null)
             {
                 return new ProfileResource
                 {
+                    Id = User.GetId(),
                     Name = User.GetName(),
                     Email = User.GetEmail()
                 };
             }
             return new ProfileResource
             {
+                Id = User.GetId(),
                 Name = entity.Name,
                 Email = User.GetEmail(),
                 Location = entity.Location,
@@ -60,6 +62,7 @@ namespace SelfService.Server.Controllers
         {
             await studentRepository.SaveProfile(new ProfileEntity
             {
+                Id = User.GetId(),
                 Name = profile.Name,
                 Location = profile.Location,
                 Grade = profile.Grade,

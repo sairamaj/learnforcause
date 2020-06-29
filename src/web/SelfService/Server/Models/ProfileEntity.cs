@@ -4,15 +4,18 @@ namespace SelfService.Server.Models
 {
     public class ProfileEntity : TableEntity
     {
-        public string Name
+        public ProfileEntity()
         {
+            this.PartitionKey = "profile";
+        }
+        
+        public string Id {
             get => this.RowKey;
-            set
-            {
+            set {
                 this.RowKey = value;
-                this.PartitionKey = value;
             }
         }
+        public string Name {get; set;}
 
         public string Location { get; set; }
         public string Phone { get; set; }
