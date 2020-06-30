@@ -73,13 +73,27 @@ namespace SelfService.Server.Controllers
             await foreach (var u in this.graphRepository.GetUsers())
             {
                 var profile = await this.studentRepository.GetProfile(u.Id);
-                yield return new Student
+                var student = new Student
                 {
                     Id = u.Id,
                     Name = u.Name,
-                    Email = u.Email,
-                    GithubUrl = profile?.GithubUrl,
+                    Profile = new ProfileResource()
                 };
+                if (profile != null)
+                {
+                    student.Profile = new ProfileResource
+                    {
+                        Id = profile.Id,
+                        Name = profile.Name,
+                        Location = profile.Location,
+                        GitUrl = profile.GithubUrl,
+                        Grade = profile.Grade,
+                        Phone = profile.Phone,
+                        RegisteredClass = profile.RegisteredClass,
+                        HomeworkPoints = profile.HomeworkPoints
+                    };
+                }
+                yield return student;
             }
         }
 
@@ -146,7 +160,8 @@ namespace SelfService.Server.Controllers
             // Update homework points
 
             var profile = await this.studentRepository.GetProfile(studentId);
-            if( profile == null){
+            if (profile == null)
+            {
                 profile = new Models.ProfileEntity();
                 profile.Id = studentId;
             }
@@ -157,4 +172,4 @@ namespace SelfService.Server.Controllers
             await this.studentRepository.SaveProfile(profile);
         }
     }
-}   
+}

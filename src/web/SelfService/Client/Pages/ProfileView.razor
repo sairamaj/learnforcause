@@ -1,0 +1,42 @@
+@using SelfService.Shared
+
+<MatTable Items="@profileProperties" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                <td>@context.Name</td>
+                @if(@context.IsLink){
+                    <td><a href="@context.Value">@context.Value</a></td>
+                }
+                else{
+                    <td>@context.Value</td>
+                }
+            </MatTableRow>
+        </MatTable>
+
+@code
+{
+    [Parameter]
+    public ProfileResource Profile { get; set; }
+    IEnumerable<ProfileData> profileProperties;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(0);
+        var profileData = new List<ProfileData>();
+        profileData.Add(new ProfileData { Name = "Name", Value = Profile.Name });
+        profileData.Add(new ProfileData { Name = "Email", Value = Profile.Email });
+        profileData.Add(new ProfileData { Name = "Grade", Value = Profile.Grade });
+        profileData.Add(new ProfileData { Name = "RegisteredClass", Value = Profile.RegisteredClass });
+        profileData.Add(new ProfileData { Name = "Location", Value = Profile.Location });
+        profileData.Add(new ProfileData { Name = "Phone", Value = Profile.Phone });
+        profileData.Add(new ProfileData { Name = "GitUrl", Value = Profile.GitUrl, IsLink = true });
+        profileData.Add(new ProfileData { Name = "Homework Points", Value = Profile.HomeworkPoints.ToString() });
+        profileProperties = profileData;
+    }
+
+    class ProfileData
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public bool IsLink {get; set;}
+    }
+}

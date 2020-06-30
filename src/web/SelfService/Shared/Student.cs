@@ -14,5 +14,6 @@ namespace SelfService.Shared
         public string GithubUrl {get; set;}
         public string Location {get; set;}
         public string Notes {get; set;}
+        public ProfileResource Profile {get; set;}
     }
 }

@@ -6,23 +6,27 @@
 @using SelfService.Shared
 
 <MatButton Raised="true" OnClick="@Refresh" style="float: right">Refresh</MatButton>
-
+<br/>
+<br/>
 @if( error != null){
     <span>@error</span>
 }
-
 @if (students == null){
-    <em>Loading ...</em>
+    <em>Loading Students...</em>
 }
 else{
-<MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=50 Striped=true>
-            <MatTableRow>
-                <td>@context.Name</td>
-                <td>@context.Id</td>
-                <td><a href="@context.GithubUrl">@context.GithubUrl</a></td>
-                <td><MatButton OnClick="@(e => AddPointsToStudent(@context.Id))" style="float: center">Add Points</MatButton></td>
-            </MatTableRow>
-        </MatTable>
+        <MatAccordion Multi="true">
+            @foreach(var student in students){
+                <MatExpansionPanel>
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader>@student.Name</MatExpansionPanelHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <ProfileView Profile="@student.Profile" />
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>            
+            }         
+        </MatAccordion>
 }
 
 @code {
@@ -62,4 +66,4 @@ else{
         NavigationManager.NavigateTo($"addstudentpoints/{id}");
     }
 
-}`  
+}
