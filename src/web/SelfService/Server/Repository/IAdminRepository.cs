@@ -14,7 +14,7 @@ namespace SelfService.Server.Repository
         IAsyncEnumerable<Student> GetStudents(string name);
         IAsyncEnumerable<ClassInfoEntity> GetClasses(string name);
         Task<string> AddHomeWorkPoint(string description, int numberofPoints);
-        IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints(string name);
+        IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints();
         Task AddStudentHomeworkPoints(string studentId, IEnumerable<string> homeworkIds);
         Task<IEnumerable<string>> GetStudentHomeworkPoints(string studentId);
         Task<ProfileEntity> GetProfile(string id);

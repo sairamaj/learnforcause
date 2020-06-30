@@ -106,7 +106,7 @@ namespace SelfService.Repository
             throw new NotImplementedException();
         }
 
-        public IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints(string name)
+        public IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints()
         {
             throw new NotImplementedException();
         }

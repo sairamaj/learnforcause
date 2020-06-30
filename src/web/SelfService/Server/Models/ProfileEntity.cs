@@ -22,5 +22,6 @@ namespace SelfService.Server.Models
         public string Grade {get; set;}
         public string RegisteredClass {get; set;}
         public string GithubUrl { get; set; }
+        public int HomeworkPoints {get; set;}
     }
 }

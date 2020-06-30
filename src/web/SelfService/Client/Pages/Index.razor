@@ -15,12 +15,27 @@
     }
 }
 
+<span>@CurrentMessageAsMarkdown</span>
+
 <ResourceViewComponent ResourceName="homepage" />        
 
 
 @code{
     CurrentRunningClassInfo currentRunningClass;
     StudentAttendance currentAttendance;
+    string currentMessage;
+
+    public string CurrentMessageAsMarkdown
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(this.currentMessage))
+            {
+                return string.Empty;
+            }
+            return Markdown.ToHtml(this.currentMessage);
+        }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -33,8 +48,10 @@
                 {
                     currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
                 }
+
+                currentMessage = await Http.GetStringAsync("program/current/message");
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 // Ignore for now.
             }
@@ -50,6 +67,4 @@
         await Http.PostAsync($"student/class/{currentRunningClass.Id}", new StringContent(string.Empty));
         currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
     }
-
-
 }

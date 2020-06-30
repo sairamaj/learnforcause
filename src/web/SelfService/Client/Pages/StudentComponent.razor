@@ -15,9 +15,10 @@
     <em>Loading ...</em>
 }
 else{
-<MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+<MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=50 Striped=true>
             <MatTableRow>
                 <td>@context.Name</td>
+                <td>@context.Id</td>
                 <td><a href="@context.GithubUrl">@context.GithubUrl</a></td>
                 <td><MatButton OnClick="@(e => AddPointsToStudent(@context.Id))" style="float: center">Add Points</MatButton></td>
             </MatTableRow>

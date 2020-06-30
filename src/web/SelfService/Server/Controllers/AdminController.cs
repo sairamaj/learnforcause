@@ -118,7 +118,7 @@ namespace SelfService.Server.Controllers
         [Route("homeworkpoints")]
         public async IAsyncEnumerable<HomeworkPoint> GetHomeworkPoints(string description, int numberOfPoints)
         {
-            await foreach (var entity in this.adminRepository.GetHomeworkPoints(""))
+            await foreach (var entity in this.adminRepository.GetHomeworkPoints())
             {
                 yield return new HomeworkPoint
                 {
@@ -144,7 +144,17 @@ namespace SelfService.Server.Controllers
         {
             await this.adminRepository.AddStudentHomeworkPoints(studentId, homeworkIds);
             // Update homework points
-            //this.studentRepository.GetProfile();
+
+            var profile = await this.studentRepository.GetProfile(studentId);
+            if( profile == null){
+                profile = new Models.ProfileEntity();
+                profile.Id = studentId;
+            }
+
+            var selectedHomeworks = this.adminRepository.GetHomeworkPoints().Where(hw => homeworkIds.Contains(hw.Id));
+            profile.HomeworkPoints = await selectedHomeworks.SumAsync(s => s.NumberofPoints);
+            System.Console.WriteLine($" >> {profile.Id} {profile.HomeworkPoints}<< ");
+            await this.studentRepository.SaveProfile(profile);
         }
     }
-}
+}   

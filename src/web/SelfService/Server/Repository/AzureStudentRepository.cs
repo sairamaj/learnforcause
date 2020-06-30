@@ -24,7 +24,7 @@ namespace SelfService.Server.Repository
         public async Task SaveProfile(ProfileEntity entity)
         {
             var table =  await GetTable("student");
-            var insertOrMergeOperation = TableOperation.InsertOrMerge(entity);
+            var insertOrMergeOperation = TableOperation.InsertOrReplace(entity);
             await table.ExecuteAsync(insertOrMergeOperation);
         }
 

@@ -47,6 +47,13 @@ namespace SelfService.Server.Controllers
         }
 
         [HttpGet]
+        [Route("current/message")]
+        public async Task<string> GetGeneralMessage()
+        {
+            return await Task.FromResult("# This is general message");
+        }
+
+        [HttpGet]
         [Route("class/current")]
         public async Task<CurrentRunningClassInfo> GetClassRunningStatus()
         {

@@ -124,7 +124,7 @@ namespace SelfService.Server.Repository
             return entity.RowKey;
         }
 
-        public async IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints(string name)
+        public async IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints()
         {
             var table = await GetTable("program");
             TableContinuationToken continuationToken = null;

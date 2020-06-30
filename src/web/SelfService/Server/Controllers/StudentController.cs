@@ -52,7 +52,8 @@ namespace SelfService.Server.Controllers
                 GitUrl = entity.GithubUrl,
                 Grade = entity.Grade,
                 Phone = entity.Phone,
-                RegisteredClass = entity.RegisteredClass
+                RegisteredClass = entity.RegisteredClass,
+                HomeworkPoints = entity.HomeworkPoints
             };
         }
 
