@@ -12,6 +12,11 @@ else if( studentHomeworkPoints == null){
     <span><em>Loading...</em></span>
 }
 else{
+<span>
+    <b>
+    <p>It may not reflect your homework points till next monday(july-6th as we are in the processing of assigning points based on  your github homework)</p>
+    </b>
+</span>
 <MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
                 @if(@context.IsDone){
