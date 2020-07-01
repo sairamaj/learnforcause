@@ -22,6 +22,7 @@ else{
                         <MatExpansionPanelHeader>@student.Name</MatExpansionPanelHeader>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
+                        <td><MatButton OnClick="@(e => AddPointsToStudent(@student.Id))" style="float: center">Add/View Points</MatButton></td>
                         <ProfileView Profile="@student.Profile" />
                     </MatExpansionPanelDetails>
                 </MatExpansionPanel>            

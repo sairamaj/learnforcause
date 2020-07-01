@@ -1,0 +1,89 @@
+@page "/homeworkpoints"
+@using SelfService.Shared
+@inject HttpClient Http
+
+<span>Homework points</span>
+<MatButton Raised=true OnClick="@OnRefresh" style="float: right">Refresh</MatButton>
+
+@if( error != null){
+    <span><em>@error</em></span>
+}
+else if( studentHomeworkPoints == null){
+    <span><em>Loading...</em></span>
+}
+else{
+<MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableRow>
+                @if(@context.IsDone){
+                    <td style="background-color:#00FF00">@(getLabel(@context))</td>
+                }
+                else{
+                    <td style="background-color:#FF0000">@(getLabel(@context))</td>
+                }
+                <td>@context.HomeworkPoint.Description</td>
+                <td>@context.HomeworkPoint.NumberofPoints</td>
+            </MatTableRow>
+        </MatTable>
+
+}
+
+@code
+{
+    IEnumerable<StudentHomeworkPoint> studentHomeworkPoints;
+    [CascadingParameter]
+    private Task<AuthenticationState> authState { get; set; }
+    string id;
+    string error;
+
+
+    protected async override void OnParametersSet()
+    {
+        await OnRefresh();
+    }
+
+    string getLabel(StudentHomeworkPoint info)
+    {
+        System.Console.WriteLine($"val: {info.HomeworkPoint.Description} {info.IsDone}");
+        return !info.IsDone ? "Not done" : "Done";
+    }
+
+    async Task LoadHomeworkPoints(string id)
+    {
+        // Get all home works ids
+        var homeworkIds = await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{id}");
+        studentHomeworkPoints = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.HomeworkPoint>>("admin/homeworkpoints"))
+            .OrderBy(s => s.Description)
+            .Select(s =>
+            {
+                var homeworkPoint = new StudentHomeworkPoint
+                {
+                    HomeworkPoint = s
+                };
+
+                homeworkPoint.IsDone = homeworkIds.FirstOrDefault(id => id == s.Id) != null;
+                return homeworkPoint;
+            });
+    }
+
+    async Task OnRefresh()
+    {
+        try
+        {
+            if (authState != null)
+            {
+                var principal = (await authState).User;
+                id = principal.GetValue("oid");
+                await LoadHomeworkPoints(id);
+            }
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+}

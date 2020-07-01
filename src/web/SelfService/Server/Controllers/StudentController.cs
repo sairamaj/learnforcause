@@ -1,13 +1,9 @@
 using SelfService.Shared;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using SelfService.Repository;
-using SelfService.Server.Extensions;
 using SelfService.Server.Models;
 using SelfService.Server.Repository;
 

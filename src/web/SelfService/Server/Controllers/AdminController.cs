@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SelfService.Repository;
-using SelfService.Server.Extensions;
 using SelfService.Server.Repository;
 
 namespace SelfService.Server.Controllers

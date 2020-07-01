@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 
-namespace SelfService.Server.Extensions
+namespace SelfService.Shared
 {
     public static class ClaimsExtension
     {
@@ -51,5 +51,26 @@ namespace SelfService.Server.Extensions
 
             return idClaim.Value;
         }
+
+        public static string GetValue(this ClaimsPrincipal principal, string claimType)
+        {
+            if (principal == null)
+            {
+                throw new ArgumentException($"Id not found in claims.");
+            }
+
+            foreach (var x in principal.Claims)
+            {
+                System.Console.WriteLine($"{x.Type} : {x.Value}");
+            }
+
+            var idClaim = principal.Claims.FirstOrDefault(c => c.Type == claimType);
+            if( idClaim == null){
+                throw new ArgumentException($"{claimType} not found.");
+            }
+
+            return idClaim.Value;
+        }
+
     }
 }

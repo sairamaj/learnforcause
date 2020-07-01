@@ -2,7 +2,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using SelfService.Server.Extensions;
+using SelfService.Shared;
 
 namespace SelfService.Server.Middleware
 {
