@@ -69,7 +69,9 @@ namespace SelfService.Server.Controllers
         [Route("students")]
         public async IAsyncEnumerable<Student> GetStudents()
         {
-            await foreach (var u in this.graphRepository.GetUsers())
+            var testStudents = GetTestStudents();
+            await foreach (var u in this.graphRepository.GetUsers()
+            .Where(s => testStudents.FirstOrDefault(t => String.Compare(s.Name, t, true) == 0) == null))
             {
                 var profile = await this.studentRepository.GetProfile(u.Id);
                 var student = new Student
@@ -169,6 +171,13 @@ namespace SelfService.Server.Controllers
             profile.HomeworkPoints = await selectedHomeworks.SumAsync(s => s.NumberofPoints);
             System.Console.WriteLine($" >> {profile.Id} {profile.HomeworkPoints}<< ");
             await this.studentRepository.SaveProfile(profile);
+        }
+
+        private IEnumerable<string> GetTestStudents()
+        {
+            yield return "Sairama Jamalapuram";
+            yield return "sairamaj@hotmail.com JAMALAPURAM";
+            yield return "sridevi Jamalapuram";
         }
     }
 }

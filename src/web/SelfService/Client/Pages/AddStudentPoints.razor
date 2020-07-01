@@ -1,9 +1,12 @@
-@page "/addstudentpoints/{id}"
+@page "/addstudentpoints/{id}/{name}"
 @using SelfService.Shared
 @using System.Linq
 @inject HttpClient Http
+@inject NavigationManager NavigationManager
 
-<MatButton Raised="true" OnClick="@OnUpdate" style="float: right">Update</MatButton>
+<h4>Student: @Name</h4>
+<MatButton Raised="true" OnClick="@OnUpdate" style="float: left">Update</MatButton>
+<MatButton Raised="true" OnClick="@OnBackToManageStudents" style="float: right">Back to Manage Students</MatButton>
 @if (studentHomeworkPoints != null){
 <MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
@@ -23,6 +26,8 @@
 {
     [Parameter]
     public string Id { get; set; }
+    [Parameter]
+    public string Name { get; set; }
     string error;
     IEnumerable<StudentHomeworkPoint> studentHomeworkPoints;
     
@@ -87,6 +92,12 @@
         {
             error = e.Message;
         }
+    }
+
+    async Task OnBackToManageStudents()
+    {
+        await Task.Delay(0);
+        NavigationManager.NavigateTo("managehomework");
     }
 }
 

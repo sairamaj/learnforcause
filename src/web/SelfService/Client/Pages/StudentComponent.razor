@@ -22,7 +22,7 @@ else{
                         <MatExpansionPanelHeader>@student.Name</MatExpansionPanelHeader>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
-                        <td><MatButton OnClick="@(e => AddPointsToStudent(@student.Id))" style="float: center">Add/View Points</MatButton></td>
+                        <td><MatButton OnClick="@(e => AddPointsToStudent(@student.Id,@student.Name))" style="float: center">Add/View Points</MatButton></td>
                         <ProfileView Profile="@student.Profile" />
                     </MatExpansionPanelDetails>
                 </MatExpansionPanel>            
@@ -62,9 +62,9 @@ else{
         }
     }
 
-    void AddPointsToStudent(string id)
+    void AddPointsToStudent(string id, string name)
     {
-        NavigationManager.NavigateTo($"addstudentpoints/{id}");
+        NavigationManager.NavigateTo($"addstudentpoints/{id}/{name}");
     }
 
 }
