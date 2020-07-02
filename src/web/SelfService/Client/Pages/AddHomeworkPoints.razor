@@ -1,0 +1,45 @@
+@page "/addhomeworkpoints"
+@using SelfService.Shared
+@attribute [Microsoft.AspNetCore.Authorization.Authorize()]
+@inject HttpClient Http
+
+@if( error != null){
+    <span><em>@error</em></span>
+}
+else if(homeworkPoints == null){
+    <span><em>Loading...</em></span>
+}
+else{
+    <MatButton Raised="true" OnClick="@OnAdd" style="float: left">Add</MatButton>
+<MatTable Items="@homeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+    <MatTableHeader>
+                <th>Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <th>Number of Points</th>
+            </MatTableHeader>
+            <MatTableRow>
+                <td>@context.Description</td>
+                <td>@context.NumberofPoints</td>
+            </MatTableRow>
+        </MatTable>
+}
+
+@code{
+    IEnumerable<HomeworkPoint> homeworkPoints;
+    string error;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            homeworkPoints = await Http.GetFromJsonAsync<IEnumerable<HomeworkPoint>>("admin/homeworkpoints");
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    async Task OnAdd()
+    {
+        await Task.Delay(0);
+    }
+}

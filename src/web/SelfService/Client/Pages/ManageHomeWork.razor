@@ -1,5 +1,13 @@
 @page "/managehomework"
-
+@inject NavigationManager NavigationManager
 @attribute [Microsoft.AspNetCore.Authorization.Authorize()]
+
+<MatButton Raised="true" OnClick="@OnManageHomeworkPoints" style="float: left">Manage Homework Points</MatButton>
 <StudentComponent />
 
+@code{
+    async Task OnManageHomeworkPoints()
+    {
+        NavigationManager.NavigateTo($"addhomeworkpoints");
+    }
+}
