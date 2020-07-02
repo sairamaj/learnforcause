@@ -2,6 +2,7 @@
 @using SelfService.Shared
 @attribute [Microsoft.AspNetCore.Authorization.Authorize()]
 @inject HttpClient Http
+@inject IMatToaster Toaster
 
 @if( error != null){
     <span><em>@error</em></span>
@@ -14,19 +15,74 @@ else{
 <MatTable Items="@homeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
     <MatTableHeader>
                 <th>Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                <th>Number of Points</th>
+                <th>Number of Points&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <th></th>
             </MatTableHeader>
             <MatTableRow>
                 <td>@context.Description</td>
                 <td>@context.NumberofPoints</td>
+                <td><MatButton Raised="true" OnClick="@(e => OnRemove(@context.Id))" style="float: left">Remove</MatButton></td>
             </MatTableRow>
         </MatTable>
+
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+            <MatDialogTitle>Add Homework</MatDialogTitle>
+            <MatDialogContent>
+                <MatTextField Label="Description" @bind-Value="@description"></MatTextField>  
+                <br/>              
+<MatNumericUpDownField Label="Number Of Points"
+                                   @bind-Value=@numberofPoints
+                                   DecimalPlaces=0
+                                   Minimum=1 Maximum=10>
+            </MatNumericUpDownField>                            
+            </MatDialogContent>
+            <MatDialogActions>
+                <MatButton OnClick="@(e => { dialogIsOpen = false; })">Cancel</MatButton>
+                <MatButton OnClick="@OkClick">OK</MatButton>
+            </MatDialogActions>
+        </MatDialog>        
 }
 
 @code{
+    bool dialogIsOpen = false;
+    string description;
+    int numberofPoints = 1;
     IEnumerable<HomeworkPoint> homeworkPoints;
     string error;
     protected override async Task OnInitializedAsync()
+    {
+        await Refresh();
+    }
+
+    async Task OnAdd()
+    {
+        await Task.Delay(0);
+        dialogIsOpen = true;
+    }
+
+    async Task OkClick()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                Toaster.Add("Description required", MatToastType.Danger);
+                return;
+            }
+            await Http.PostAsync($"admin/homeworkpoints/{description}/{numberofPoints}", new StringContent(""));
+            Toaster.Add($"{description} has been added.", MatToastType.Success);
+            dialogIsOpen = false;
+            await Refresh();
+        }
+        catch (System.Exception e)
+        {
+            Toaster.Add(e.Message, MatToastType.Danger);
+            System.Console.WriteLine(e.Message);
+            error = e.Message;
+        }
+    }
+
+    async Task Refresh()
     {
         try
         {
@@ -38,8 +94,8 @@ else{
         }
     }
 
-    async Task OnAdd()
+    async Task OnRemove(string id)
     {
-        await Task.Delay(0);
+        System.Console.WriteLine($"remvoing {id}");
     }
 }
