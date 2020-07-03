@@ -20,14 +20,17 @@ else{
 
 <div class="mat-layout-grid">
             <div class="mat-layout-grid-inner">
-                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">@programClass.DateTime</div>
-                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">@programClass.ClassName</div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">@programClass.Id</div>
+                @* <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">@programClass.DateTime</div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">@programClass.ClassName</div> *@
             </div>
         </div>                            
                             </MatExpansionPanelHeader>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
-                        <p></p>
+                        <p>
+                            <MatButton Raised=true OnClick="@( ()=> GetStudents(@programClass.Id))" style="float: right">Get</MatButton>
+                        </p>
                     </MatExpansionPanelDetails>
                 </MatExpansionPanel>            
             }         
@@ -50,6 +53,14 @@ else{
         catch (System.Exception e)
         {
             error = e.Message;
+        }
+    }
+
+    async Task GetStudents(string id){
+        System.Console.WriteLine($"Class id: {id}");
+        var students = await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/classes/{id}");
+        foreach(var s in students){
+            System.Console.WriteLine($"student: {s}");
         }
     }
 }

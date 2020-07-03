@@ -106,7 +106,6 @@ namespace SelfService.Server.Repository
 
                 continuationToken = queryResult.ContinuationToken;
             } while (continuationToken != null);
-
         }
 
         public async Task<string> AddHomeWorkPoint(string description, int numberofPoints)
@@ -201,5 +200,25 @@ namespace SelfService.Server.Repository
             return result.Result as ProfileEntity;
         }
 
+        public async IAsyncEnumerable<string> GetClassAttendance(string classId)
+        {
+            System.Console.WriteLine("_________________________");
+            System.Console.WriteLine($"{classId}");
+            System.Console.WriteLine("_________________________");
+             var table = await GetTable("student");
+            TableContinuationToken continuationToken = null;
+            string filter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, classId);
+            do
+            {
+                var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery().Where(filter), continuationToken);
+                foreach (var result in queryResult)
+                {
+                    yield return result.RowKey;
+                }
+
+                continuationToken = queryResult.ContinuationToken;
+            } while (continuationToken != null);
+
+       }
     }
 }

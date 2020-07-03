@@ -125,5 +125,10 @@ namespace SelfService.Repository
         {
             throw new NotImplementedException();
         }
+
+        public IAsyncEnumerable<string> GetClassAttendance(string classId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

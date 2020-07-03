@@ -109,7 +109,7 @@ namespace SelfService.Server.Controllers
                 {
                     ClassName = entity.ClassName,
                     DateTime = entity.DateTime,
-                    Id = entity.Id
+                    Id = entity.RowKey,
                 };
             }
         }
@@ -154,8 +154,9 @@ namespace SelfService.Server.Controllers
             {
                 await this.adminRepository.RemoveHomeWorkPoint(id);
             }
-            catch(NotFoundException){
-                    throw;
+            catch (NotFoundException)
+            {
+                throw;
             }
             catch (System.Exception ex)
             {
@@ -193,6 +194,15 @@ namespace SelfService.Server.Controllers
             await this.studentRepository.SaveProfile(profile);
         }
 
+        [HttpGet]
+        [Route("classes/{id}")]
+        public async IAsyncEnumerable<string> GetStudentsAttendedForClass(string id)
+        {
+            await foreach (var student in this.adminRepository.GetClassAttendance(id))
+            {
+                yield return student;
+            }
+        }
         private IEnumerable<string> GetTestStudents()
         {
             yield return "Sairama Jamalapuram";

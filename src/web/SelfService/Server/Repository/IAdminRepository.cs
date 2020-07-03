@@ -19,5 +19,6 @@ namespace SelfService.Server.Repository
         Task AddStudentHomeworkPoints(string studentId, IEnumerable<string> homeworkIds);
         Task<IEnumerable<string>> GetStudentHomeworkPoints(string studentId);
         Task<ProfileEntity> GetProfile(string id);
+        IAsyncEnumerable<string> GetClassAttendance(string classId);
     }
 }
