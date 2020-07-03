@@ -4,14 +4,21 @@ namespace SelfService.Server.Models
 {
     public class HomeworkPointEntity : TableEntity
     {
-        public string Id {
+        public HomeworkPointEntity()
+        {
+            this.PartitionKey = "homeworkpoint";
+        }
+        public string Id
+        {
             get => RowKey;
-            set {
+            set
+            {
                 this.RowKey = value;
             }
         }
 
-        public string Description {get; set;}
-        public int NumberofPoints {get; set;}
+        public string Description { get; set; }
+        public string Category { get; set; }
+        public int NumberofPoints { get; set; }
     }
 }

@@ -115,13 +115,18 @@ namespace SelfService.Server.Controllers
         }
 
         [HttpPost]
-        [Route("homeworkpoints/{description}/{numberOfPoints:int}")]
-        public async Task AddHomeworkPoint(string description, int numberOfPoints)
+        [Route("homeworkpoints")]
+        public async Task AddHomeworkPoint(HomeworkPoint homeworkPoint)
         {
-            this.logger.LogDebug($"AddHomeworkPoint: {description} {numberOfPoints}");
+            this.logger.LogDebug($"AddHomeworkPoint: {homeworkPoint.Description} {homeworkPoint.NumberofPoints}");
             try
             {
-                await this.adminRepository.AddHomeWorkPoint(description, numberOfPoints);
+                await this.adminRepository.AddHomeWorkPoint(new Models.HomeworkPointEntity{
+                    Category = homeworkPoint.Category,
+                    Description = homeworkPoint.Description,
+                    NumberofPoints = homeworkPoint.NumberofPoints,
+                    Id = Guid.NewGuid().ToString()
+                });
             }
             catch (System.Exception ex)
             {
@@ -140,6 +145,7 @@ namespace SelfService.Server.Controllers
                 {
                     Id = entity.Id,
                     Description = entity.Description,
+                    Category = entity.Category,
                     NumberofPoints = entity.NumberofPoints
                 };
             }

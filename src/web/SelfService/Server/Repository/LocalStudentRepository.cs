@@ -101,7 +101,7 @@ namespace SelfService.Repository
             throw new NotImplementedException();
         }
 
-        public Task<string> AddHomeWorkPoint(string description, int pointCount)
+        public Task<string> AddHomeWorkPoint(HomeworkPointEntity entity)
         {
             throw new NotImplementedException();
         }

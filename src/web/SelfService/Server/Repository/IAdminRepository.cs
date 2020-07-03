@@ -13,7 +13,7 @@ namespace SelfService.Server.Repository
         IAsyncEnumerable<Resource> GetResources(string name);
         IAsyncEnumerable<Student> GetStudents(string name);
         IAsyncEnumerable<ClassInfoEntity> GetClasses(string name);
-        Task<string> AddHomeWorkPoint(string description, int numberofPoints);
+        Task<string> AddHomeWorkPoint(HomeworkPointEntity entity);
         Task RemoveHomeWorkPoint(string id);
         IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints();
         Task AddStudentHomeworkPoints(string studentId, IEnumerable<string> homeworkIds);

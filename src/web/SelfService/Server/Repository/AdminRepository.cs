@@ -110,17 +110,9 @@ namespace SelfService.Server.Repository
             } while (continuationToken != null);
         }
 
-        public async Task<string> AddHomeWorkPoint(string description, int numberofPoints)
+        public async Task<string> AddHomeWorkPoint(HomeworkPointEntity entity)
         {
             var table = await GetTable("program");
-            var entity = new HomeworkPointEntity
-            {
-                PartitionKey = "homeworkpoint",
-                RowKey = Guid.NewGuid().ToString(),
-                Description = description,
-                NumberofPoints = numberofPoints
-            };
-
             var insertOrMergeOperation = TableOperation.Insert(entity);
             await table.ExecuteAsync(insertOrMergeOperation);
             return entity.RowKey;
