@@ -19,6 +19,11 @@ else{
     </b>
 </span>
 <MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+    <MatTableHeader>
+                <th>Status</th>
+                <th>Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                <th>Number of Points&nbsp;&nbsp;&nbsp;&nbsp;</th>
+            </MatTableHeader>
             <MatTableRow>
                 @if(@context.IsDone){
                     <td style="background-color:#00FF00">@(getLabel(@context))</td>
@@ -58,7 +63,7 @@ else{
         // Get all home works ids
         var homeworkIds = await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{id}");
         studentHomeworkPoints = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.HomeworkPoint>>("admin/homeworkpoints"))
-            .OrderBy(s => s.Description)
+            .OrderBy(s => s.NumberId)
             .Select(s =>
             {
                 var homeworkPoint = new StudentHomeworkPoint

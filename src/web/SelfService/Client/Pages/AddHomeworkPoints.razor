@@ -11,16 +11,19 @@
     <span><em>Loading...</em></span>
 }
 else{
+    <br/>
     <MatButton Raised="true" OnClick="@OnAdd" style="float: left">Add</MatButton>
 <MatTable Items="@homeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
     <MatTableHeader>
                 <th></th>
+                <th>Order Id</th>
                 <th>Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                 <th>Category</th>
                 <th>Number of Points&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
             </MatTableHeader>
             <MatTableRow>
                 <td><MatButton Icon="delete" OnClick="@(e => OnRemove(@context.Id))" style="float: left"></MatButton></td>
+                <td>@context.NumberId</td>
                 <td>@context.Description</td>
                  <td>@context.Category</td>
                 <td>@context.NumberofPoints</td>
@@ -33,6 +36,8 @@ else{
                 <MatTextField Label="Description" @bind-Value="@description"></MatTextField>  
                 <br/>              
                 <MatTextField Label="Category" @bind-Value="@category"></MatTextField>  
+                <br/>              
+                <MatTextField Label="Order" @bind-Value="@orderId"></MatTextField>  
                 <br/>              
 <MatNumericUpDownField Label="Number Of Points"
                                    @bind-Value=@numberofPoints
@@ -52,6 +57,7 @@ else{
     string description;
     string category;
     int numberofPoints = 1;
+    int orderId = 400;
     IEnumerable<HomeworkPoint> homeworkPoints;
     string error;
     protected override async Task OnInitializedAsync()
@@ -70,25 +76,26 @@ else{
         try
         {
             error = string.Empty;
-            if (string.IsNullOrWhiteSpace(description))
-            {
-                Toaster.Add("Description required", MatToastType.Danger);
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(category))
-            {
-                Toaster.Add("Category required", MatToastType.Danger);
-                return;
-            }
-
-            var response = await Http.PostAsJsonAsync<HomeworkPoint>($"admin/homeworkpoints", new HomeworkPoint
+            var homeworkPoint = new HomeworkPoint
             {
                 Category = category,
                 Description = description,
                 NumberofPoints = numberofPoints,
-            });
+                NumberId = orderId,
+            };
 
-            response.EnsureSuccessStatusCode();
+            try
+            {
+                homeworkPoint.Validate();
+                var response = await Http.PostAsJsonAsync<HomeworkPoint>($"admin/homeworkpoints", homeworkPoint );
+                response.EnsureSuccessStatusCode();
+            }
+            catch (System.Exception e)
+            {
+                Toaster.Add(e.Message, MatToastType.Danger);
+                return;
+            }
+
             Toaster.Add($"{description} has been added.", MatToastType.Success);
             dialogIsOpen = false;
             await Refresh();
@@ -105,7 +112,8 @@ else{
     {
         try
         {
-            homeworkPoints = await Http.GetFromJsonAsync<IEnumerable<HomeworkPoint>>("admin/homeworkpoints");
+            homeworkPoints = (await Http.GetFromJsonAsync<IEnumerable<HomeworkPoint>>("admin/homeworkpoints"))
+                .OrderBy(p => p.NumberId);
         }
         catch (System.Exception e)
         {

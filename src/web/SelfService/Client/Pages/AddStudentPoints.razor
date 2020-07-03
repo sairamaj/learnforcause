@@ -3,6 +3,7 @@
 @using System.Linq
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject IMatToaster Toaster
 
 <h4>Student: @Name</h4>
 <MatButton Raised="true" OnClick="@OnUpdate" style="float: left">Update</MatButton>
@@ -38,7 +39,7 @@
             // Get all home works ids
             var homeworkIds = await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{Id}");
             studentHomeworkPoints = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.HomeworkPoint>>("admin/homeworkpoints"))
-                .OrderBy(s => s.Description)
+                .OrderBy(s => s.NumberId)
                 .Select(s =>
                 {
                     var homeworkPoint = new StudentHomeworkPoint
@@ -86,10 +87,11 @@
         {
             var doneHomeworkIds = studentHomeworkPoints.Where(s => s.IsDone).Select(s => s.HomeworkPoint.Id);
             await Http.PostAsJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{Id}", doneHomeworkIds);
-
+            Toaster.Add("Updated successfully.", MatToastType.Success);
         }
         catch (System.Exception e)
         {
+            Toaster.Add(e.Message, MatToastType.Danger);
             error = e.Message;
         }
     }

@@ -125,6 +125,7 @@ namespace SelfService.Server.Controllers
                     Category = homeworkPoint.Category,
                     Description = homeworkPoint.Description,
                     NumberofPoints = homeworkPoint.NumberofPoints,
+                    NumberId = homeworkPoint.NumberId,
                     Id = Guid.NewGuid().ToString()
                 });
             }
@@ -146,7 +147,8 @@ namespace SelfService.Server.Controllers
                     Id = entity.Id,
                     Description = entity.Description,
                     Category = entity.Category,
-                    NumberofPoints = entity.NumberofPoints
+                    NumberofPoints = entity.NumberofPoints,
+                    NumberId = entity.NumberId,
                 };
             }
         }
