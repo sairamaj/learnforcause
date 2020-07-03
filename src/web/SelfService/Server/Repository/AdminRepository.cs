@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.WindowsAzure.Storage.Table;
+using SelfService.Server.Exceptions;
 using SelfService.Server.Models;
 using SelfService.Shared;
 
@@ -124,6 +125,21 @@ namespace SelfService.Server.Repository
             return entity.RowKey;
         }
 
+        public async Task RemoveHomeWorkPoint(string id)
+        {
+            var table = await GetTable("program");
+            var operation = TableOperation.Retrieve<HomeworkPointEntity>("homeworkpoint", id);
+            var result = await table.ExecuteAsync(operation);
+            if (result == null)
+            {
+                throw new NotFoundException();
+            }
+
+            operation = TableOperation.Delete(result.Result as HomeworkPointEntity);
+            await table.ExecuteAsync(operation);
+
+        }
+
         public async IAsyncEnumerable<HomeworkPointEntity> GetHomeworkPoints()
         {
             var table = await GetTable("program");
@@ -146,20 +162,21 @@ namespace SelfService.Server.Repository
 
         public async Task AddStudentHomeworkPoints(string studentId, IEnumerable<string> homeworkIds)
         {
-             var table = await GetTable("student");
-             var entity = new StudentHomeworkPointEntity{
-                 PartitionKey = "studenthomework",
-                 StudentId = studentId,
-                 HomeworkPointIds = JsonSerializer.Serialize(homeworkIds)
-             };
+            var table = await GetTable("student");
+            var entity = new StudentHomeworkPointEntity
+            {
+                PartitionKey = "studenthomework",
+                StudentId = studentId,
+                HomeworkPointIds = JsonSerializer.Serialize(homeworkIds)
+            };
 
             var insertOrMergeOperation = TableOperation.InsertOrReplace(entity);
             await table.ExecuteAsync(insertOrMergeOperation);
-       }
+        }
 
         public async Task<IEnumerable<string>> GetStudentHomeworkPoints(string studentId)
         {
-             var table = await GetTable("student");
+            var table = await GetTable("student");
             TableContinuationToken continuationToken = null;
             var filter = TableQuery.CombineFilters(
                 TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "studenthomework"),
@@ -178,10 +195,11 @@ namespace SelfService.Server.Repository
 
         public async Task<ProfileEntity> GetProfile(string id)
         {
-             var table =  await GetTable("student");
+            var table = await GetTable("student");
             var retrieveOperation = TableOperation.Retrieve<ProfileEntity>("student", id);
             var result = await table.ExecuteAsync(retrieveOperation);
             return result.Result as ProfileEntity;
-       }
+        }
+
     }
 }

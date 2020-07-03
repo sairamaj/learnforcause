@@ -120,5 +120,10 @@ namespace SelfService.Repository
         {
             throw new NotImplementedException();
         }
+
+        public Task RemoveHomeWorkPoint(string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SelfService.Repository;
 using SelfService.Server.Repository;
+using SelfService.Server.Exceptions;
 
 namespace SelfService.Server.Controllers
 {
@@ -141,6 +142,25 @@ namespace SelfService.Server.Controllers
                     Description = entity.Description,
                     NumberofPoints = entity.NumberofPoints
                 };
+            }
+        }
+
+        [HttpDelete]
+        [Route("homeworkpoints/{id}")]
+        public async Task RemoveHomeWorkPoint(string id)
+        {
+            this.logger.LogDebug($"DeleteHomeworkPoint: {id}");
+            try
+            {
+                await this.adminRepository.RemoveHomeWorkPoint(id);
+            }
+            catch(NotFoundException){
+                    throw;
+            }
+            catch (System.Exception ex)
+            {
+                this.logger.LogError(ex, $"Error RemoveHomeWorkPoint");
+                throw;
             }
         }
 

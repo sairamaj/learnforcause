@@ -7,21 +7,21 @@
 @if( error != null){
     <span><em>@error</em></span>
 }
-else if(homeworkPoints == null){
+@if(homeworkPoints == null){
     <span><em>Loading...</em></span>
 }
 else{
     <MatButton Raised="true" OnClick="@OnAdd" style="float: left">Add</MatButton>
 <MatTable Items="@homeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
     <MatTableHeader>
+                <th></th>
                 <th>Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                 <th>Number of Points&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                <th></th>
             </MatTableHeader>
             <MatTableRow>
+                <td><MatButton Icon="delete" OnClick="@(e => OnRemove(@context.Id))" style="float: left"></MatButton></td>
                 <td>@context.Description</td>
                 <td>@context.NumberofPoints</td>
-                <td><MatButton Raised="true" OnClick="@(e => OnRemove(@context.Id))" style="float: left">Remove</MatButton></td>
             </MatTableRow>
         </MatTable>
 
@@ -64,6 +64,7 @@ else{
     {
         try
         {
+            error = string.Empty;
             if (string.IsNullOrWhiteSpace(description))
             {
                 Toaster.Add("Description required", MatToastType.Danger);
@@ -96,6 +97,16 @@ else{
 
     async Task OnRemove(string id)
     {
-        System.Console.WriteLine($"remvoing {id}");
+        try
+        {
+            System.Console.WriteLine($"remvoing {id}");
+            var response = await Http.DeleteAsync($"admin/homeworkpoints/{id}");
+            response.EnsureSuccessStatusCode();
+            await Refresh();
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
     }
 }
