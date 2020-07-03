@@ -20,17 +20,22 @@ else{
 
 <div class="mat-layout-grid">
             <div class="mat-layout-grid-inner">
-                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-12">@programClass.Id</div>
-                @* <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">@programClass.DateTime</div>
-                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">@programClass.ClassName</div> *@
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">@programClass.ClassInfo.FriendlyDate</div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">@programClass.ClassInfo.ClassName</div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-4">@programClass.Students.Count()</div>
             </div>
         </div>                            
                             </MatExpansionPanelHeader>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
-                        <p>
-                            <MatButton Raised=true OnClick="@( ()=> GetStudents(@programClass.Id))" style="float: right">Get</MatButton>
-                        </p>
+                            <MatButton Raised=true OnClick="@( ()=> OnRefresh(@programClass))" style="float: right">Refresh</MatButton>
+                            <div>
+                                <MatTable Items="@programClass.Students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+                                        <MatTableRow>
+                                            <td>@context</td>
+                                        </MatTableRow>
+                                    </MatTable>
+                                    </div>
                     </MatExpansionPanelDetails>
                 </MatExpansionPanel>            
             }         
@@ -40,27 +45,66 @@ else{
 
 @code
 {
-    IEnumerable<ClassInfo> classes;
+    IEnumerable<ClassStudentInfo> classes;
     string error;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            classes = (await Http.GetFromJsonAsync<IEnumerable<ClassInfo>>("admin/classes"))
-                .OrderByDescending(c => c.DateTime);
+            var tempClasses = (await Http.GetFromJsonAsync<IEnumerable<ClassInfo>>("admin/classes"))
+                .OrderByDescending(c => c.DateTime)
+                .Select(c => new ClassStudentInfo
+                {
+                    ClassInfo = c,
+                    Students = new List<string>{}
+                }).ToList();
+
+            @* var lastClass = tempClasses.FirstOrDefault();
+            if( lastClass != null){
+                    lastClass.Students = await GetStudents(lastClass);
+            } *@
+            foreach(var tempClass in tempClasses){
+                tempClass.Students = await GetStudents(tempClass);
+            }
+
+            classes = tempClasses.ToList();
+            foreach(var c in classes)
+            {
+                System.Console.WriteLine($"{c.Students.Count()}");
+            }
         }
         catch (System.Exception e)
         {
-            error = e.Message;
+            error = e.ToString();
+        }
+        finally{
+            //StateHasChanged();
         }
     }
 
-    async Task GetStudents(string id){
-        System.Console.WriteLine($"Class id: {id}");
-        var students = await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/classes/{id}");
-        foreach(var s in students){
+    async Task OnRefresh(ClassStudentInfo info)
+    {
+        info.Students = await GetStudents(info);
+    }
+
+    async Task<IEnumerable<string>> GetStudents(ClassStudentInfo info)
+    {
+        System.Console.WriteLine($"Class id: {info.ClassInfo.Id}");
+
+        var students = (await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/classes/{info.ClassInfo.Id}")).ToList();
+        foreach (var s in students)
+        {
             System.Console.WriteLine($"student: {s}");
         }
+        
+        return students;
     }
+
+    class ClassStudentInfo
+    {
+        public ClassInfo ClassInfo { get; set; }
+        public IEnumerable<string> Students { get; set; }
+    }
+
 }

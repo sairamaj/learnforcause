@@ -96,9 +96,11 @@ namespace SelfService.Server.Repository
         {
             var table = await GetTable("program");
             TableContinuationToken continuationToken = null;
+            string filter = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "class");
             do
             {
-                var queryResult = await table.ExecuteQuerySegmentedAsync(new TableQuery<ClassInfoEntity>(), continuationToken);
+                var queryResult = await table.ExecuteQuerySegmentedAsync(
+                    new TableQuery<ClassInfoEntity>().Where(filter), continuationToken);
                 foreach (var result in queryResult)
                 {
                     yield return result;
