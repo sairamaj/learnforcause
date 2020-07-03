@@ -1,0 +1,55 @@
+@page "/classattendance"
+@using SelfService.Shared
+@attribute [Microsoft.AspNetCore.Authorization.Authorize()]
+@inject HttpClient Http
+@inject IMatToaster Toaster
+
+@if( error != null){
+    <span><em>@error</em></span>
+}
+@if(classes == null){
+    <span><em>Loading...</em></span>
+}
+else{
+
+        <MatAccordion Multi="true">
+            @foreach(var programClass in classes){
+                <MatExpansionPanel>
+                    <MatExpansionPanelSummary>
+                        <MatExpansionPanelHeader>
+
+<div class="mat-layout-grid">
+            <div class="mat-layout-grid-inner">
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">@programClass.DateTime</div>
+                <div class="mat-layout-grid-cell mat-layout-grid-cell-span-6">@programClass.ClassName</div>
+            </div>
+        </div>                            
+                            </MatExpansionPanelHeader>
+                    </MatExpansionPanelSummary>
+                    <MatExpansionPanelDetails>
+                        <p></p>
+                    </MatExpansionPanelDetails>
+                </MatExpansionPanel>            
+            }         
+        </MatAccordion>
+
+}
+
+@code
+{
+    IEnumerable<ClassInfo> classes;
+    string error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            classes = (await Http.GetFromJsonAsync<IEnumerable<ClassInfo>>("admin/classes"))
+                .OrderByDescending(c => c.DateTime);
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+}

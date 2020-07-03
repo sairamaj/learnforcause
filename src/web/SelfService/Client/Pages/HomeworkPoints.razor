@@ -8,7 +8,8 @@
 @if( error != null){
     <span><em>@error</em></span>
 }
-else if( studentHomeworkPoints == null){
+
+@if( studentHomeworkPoints == null){
     <span><em>Loading...</em></span>
 }
 else{
