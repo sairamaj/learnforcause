@@ -2,8 +2,8 @@
 @using System.Linq
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
-
-<MatButton Raised="true" OnClick="@Refresh" style="float: right">Refresh</MatButton>
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+<MatButton OnClick="@Refresh" style="float: right">Refresh</MatButton>
 <br/>
 <br/>
 @if( error != null){
@@ -20,7 +20,8 @@ else{
                         <MatExpansionPanelHeader>@student.Name</MatExpansionPanelHeader>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
-                        <td><MatButton OnClick="@(e => AddPointsToStudent(@student.Id,@student.Name))" style="float: center">Add/View Points</MatButton></td>
+                        <MatButton OnClick="@(e => RefreshProfile(@student.Id))" style="float: right">Refresh</MatButton>
+                        <MatButton OnClick="@(e => AddPointsToStudent(@student.Id,@student.Name))" style="float: right">Add/View Points</MatButton>
                         <ProfileView Profile="@student.Profile" />
                     </MatExpansionPanelDetails>
                 </MatExpansionPanel>            
@@ -51,11 +52,29 @@ else{
     {
         try
         {
-            var tempStudents = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"))
-            .ToList();
+            var tempStudents = (await localStorage.GetItemAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"));
+            if( tempStudents == null)
+            {
+                System.Console.WriteLine("Loading from resource");
+                tempStudents = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"));
+                await localStorage.SetItemAsync("admin/students", tempStudents);
+            }
+            else{
+                System.Console.WriteLine("Loading from local storage");
+            }
+
+            tempStudents = tempStudents.ToList();
+
             foreach(var student in tempStudents )
             {
-                var profile = await Http.GetFromJsonAsync<ProfileResource>($"admin/students/profile/{student.Id}");
+                var profileKey = $"admin/students/profile/{student.Id}";
+                var profile = await localStorage.GetItemAsync<ProfileResource>(profileKey);
+                if( profile == null)
+                {
+                    profile = await Http.GetFromJsonAsync<ProfileResource>(profileKey);
+                    await localStorage.SetItemAsync(profileKey, profile);
+                }
+
                 student.Profile = profile;
             }
 
@@ -72,4 +91,23 @@ else{
         NavigationManager.NavigateTo($"addstudentpoints/{id}/{name}");
     }
 
+    async Task RefreshProfile(string id)
+    {
+        try
+        {
+            var profileKey = $"admin/students/profile/{id}";
+            var profile = await Http.GetFromJsonAsync<ProfileResource>(profileKey);
+            await localStorage.SetItemAsync(profileKey, profile);
+            var student = students.FirstOrDefault(s => s.Id == id);
+            student.Profile = profile;
+            students = students.ToList();
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+        finally{
+            StateHasChanged();
+        }
+    }
 }

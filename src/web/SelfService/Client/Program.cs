@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MatBlazor;
+using Blazored.LocalStorage;
 
 namespace SelfService.Client
 {
@@ -41,6 +42,8 @@ namespace SelfService.Client
                                 config.MaximumOpacity = 95;
                                 config.VisibleStateDuration = 3000;
                             });
+            builder.Services.AddBlazoredLocalStorage(config =>
+        config.JsonSerializerOptions.WriteIndented = true);
             await builder.Build().RunAsync();
         }
     }

@@ -3,12 +3,16 @@
 @using System.Linq
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IMatToaster Toaster
 
+@if (studentHomeworkPoints == null){
+    <span><em>Loading...</em></span>
+}
+else{
 <h4>Student: @Name</h4>
 <MatButton Raised="true" OnClick="@OnUpdate" style="float: left">Update</MatButton>
 <MatButton Raised="true" OnClick="@OnBackToManageStudents" style="float: right">Back to Manage Students</MatButton>
-@if (studentHomeworkPoints != null){
 <MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
                 <td><MatCheckbox 
@@ -88,6 +92,11 @@
             var doneHomeworkIds = studentHomeworkPoints.Where(s => s.IsDone).Select(s => s.HomeworkPoint.Id);
             await Http.PostAsJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{Id}", doneHomeworkIds);
             Toaster.Add("Updated successfully.", MatToastType.Success);
+
+            // Remove to get fresh update.            
+            var profileKey = $"admin/students/profile/{Id}";
+            await localStorage.RemoveItemAsync(profileKey);
+            NavigationManager.NavigateTo("managestudentshomework");
         }
         catch (System.Exception e)
         {
@@ -99,7 +108,7 @@
     async Task OnBackToManageStudents()
     {
         await Task.Delay(0);
-        NavigationManager.NavigateTo("managehomework");
+        NavigationManager.NavigateTo("managestudentshomework");
     }
 }
 

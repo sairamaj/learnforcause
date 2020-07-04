@@ -12,7 +12,7 @@
 }
 else{
     <br/>
-    <MatButton Raised="true" OnClick="@OnAdd" style="float: left">Add</MatButton>
+    <MatButton OnClick="@OnAdd" style="float: left">Add</MatButton>
 <MatTable Items="@homeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
     <MatTableHeader>
                 <th></th>
@@ -125,7 +125,7 @@ else{
     {
         try
         {
-            System.Console.WriteLine($"remvoing {id}");
+            System.Console.WriteLine($"removing {id}");
             var response = await Http.DeleteAsync($"admin/homeworkpoints/{id}");
             response.EnsureSuccessStatusCode();
             await Refresh();

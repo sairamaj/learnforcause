@@ -1,0 +1,112 @@
+@page "/managestudentshomework"
+@using SelfService.Shared
+@using System.Linq
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@attribute [Microsoft.AspNetCore.Authorization.Authorize()]
+@inject IMatToaster Toaster
+
+<MatButton OnClick="@OnManageHomeworkPoints" style="float: right">Manage Homework Points</MatButton>
+<MatButton OnClick="@OnRefresh" style="float: right">Refresh</MatButton>
+<MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+            <MatTableHeader>
+                <th>Name</th>
+                <th>Homework Points</th>
+                <th>Github</th>
+                <th></th>
+            </MatTableHeader>
+
+            <MatTableRow>
+                <td>@context.Name</td>
+                <td>@context.Profile.HomeworkPoints</td>
+                <td><a href="@context.Profile.GitUrl">@context.Profile.GitUrl</a></td>
+                <td><MatButton OnClick="@(e => AddPointsToStudent(@context.Id,@context.Name))">Update</MatButton></td>
+            </MatTableRow>
+        </MatTable>
+
+@code{
+    IEnumerable<SelfService.Shared.Student> students;
+    string error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await Load();
+        }
+        catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+    async Task OnManageHomeworkPoints()
+    {
+        await Task.Delay(0);
+        NavigationManager.NavigateTo($"addhomeworkpoints");
+    }
+
+    async Task OnRefresh()
+    {
+        try
+        {
+            Toaster.Add($"Refresh started...", MatToastType.Info);
+            // remove local storage
+            foreach (var student in students)
+            {
+                var profileKey = $"admin/students/profile/{student.Id}";
+                await localStorage.RemoveItemAsync(profileKey);
+            }
+            await Load();
+
+        }
+        finally
+        {
+            Toaster.Add($"Refresh done...", MatToastType.Info);
+        }
+    }
+    async Task Load()
+    {
+        try
+        {
+            var tempStudents = (await localStorage.GetItemAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"));
+            if (tempStudents == null)
+            {
+                System.Console.WriteLine("Loading from resource");
+                tempStudents = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"));
+                await localStorage.SetItemAsync("admin/students", tempStudents);
+            }
+            else
+            {
+                System.Console.WriteLine("Loading from local storage");
+            }
+
+            tempStudents = tempStudents.ToList();
+
+            foreach (var student in tempStudents)
+            {
+                var profileKey = $"admin/students/profile/{student.Id}";
+                var profile = await localStorage.GetItemAsync<ProfileResource>(profileKey);
+                if (profile == null)
+                {
+                    profile = await Http.GetFromJsonAsync<ProfileResource>(profileKey);
+                    await localStorage.SetItemAsync(profileKey, profile);
+                }
+
+                student.Profile = profile;
+            }
+
+            students = tempStudents.OrderBy(s => s.Name);
+        }
+        catch (System.Exception e)
+        {
+            error = e.Message;
+        }
+    }
+
+    void AddPointsToStudent(string id, string name)
+    {
+        NavigationManager.NavigateTo($"addstudentpoints/{id}/{name}");
+    }
+}

@@ -2,7 +2,7 @@
 @inject NavigationManager NavigationManager
 @attribute [Microsoft.AspNetCore.Authorization.Authorize()]
 
-<MatButton Raised="true" OnClick="@OnManageHomeworkPoints" style="float: left">Manage Homework Points</MatButton>
+<MatButton OnClick="@OnManageHomeworkPoints" style="float: right">Manage Homework Points</MatButton>
 <StudentComponent />
 
 @code{
