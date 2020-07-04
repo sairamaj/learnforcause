@@ -3,16 +3,17 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
-<MatButton OnClick="@Refresh" style="float: right">Refresh</MatButton>
-<br/>
-<br/>
+@inject IMatToaster Toaster
+
 @if( error != null){
-    <span>@error</span>
+    <ErrorComponent Error=@error />
 }
 @if (students == null){
     <em>Loading Students...</em>
 }
 else{
+        <MatButton OnClick="@Refresh" style="float: right">Refresh</MatButton>
+        <br/><br/>
         <MatAccordion Multi="true">
             @foreach(var student in students){
                 <MatExpansionPanel>
@@ -20,8 +21,8 @@ else{
                         <MatExpansionPanelHeader>@student.Name</MatExpansionPanelHeader>
                     </MatExpansionPanelSummary>
                     <MatExpansionPanelDetails>
-                        <MatButton OnClick="@(e => RefreshProfile(@student.Id))" style="float: right">Refresh</MatButton>
-                        <MatButton OnClick="@(e => AddPointsToStudent(@student.Id,@student.Name))" style="float: right">Add/View Points</MatButton>
+                        @* <MatButton OnClick="@(e => RefreshStudentProfile(@student.Id))" style="float: right">Refresh</MatButton> *@
+                        @* <MatButton OnClick="@(e => AddPointsToStudent(@student.Id,@student.Name))" style="float: right">Add/View Points</MatButton> *@
                         <ProfileView Profile="@student.Profile" />
                     </MatExpansionPanelDetails>
                 </MatExpansionPanel>            
@@ -39,7 +40,7 @@ else{
     {
         try
         {
-            await Refresh();
+            await Load();
         }
         catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException exception)
         {
@@ -48,7 +49,26 @@ else{
 
     }
 
-    async Task Refresh()
+    async Task Refresh(){
+        try
+        {
+            Toaster.Add("Refresh started", MatToastType.Info);
+            foreach (var student in students)
+            {
+                var profileKey = $"admin/students/profile/{student.Id}";
+                await localStorage.RemoveItemAsync(profileKey);
+            }
+
+            await Load();
+            StateHasChanged();
+            Toaster.Add("Refresh success", MatToastType.Success);
+        }
+        catch(Exception e)
+        {
+            Toaster.Add($"Refresh error:{e.Message}", MatToastType.Danger);
+        }
+    }
+    async Task Load()
     {
         try
         {
@@ -67,15 +87,7 @@ else{
 
             foreach(var student in tempStudents )
             {
-                var profileKey = $"admin/students/profile/{student.Id}";
-                var profile = await localStorage.GetItemAsync<ProfileResource>(profileKey);
-                if( profile == null)
-                {
-                    profile = await Http.GetFromJsonAsync<ProfileResource>(profileKey);
-                    await localStorage.SetItemAsync(profileKey, profile);
-                }
-
-                student.Profile = profile;
+                student.Profile = await GetProfile(student.Id);
             }
 
             students = tempStudents.OrderBy(s => s.Name);
@@ -91,23 +103,28 @@ else{
         NavigationManager.NavigateTo($"addstudentpoints/{id}/{name}");
     }
 
-    async Task RefreshProfile(string id)
+    async Task RefreshStudentProfile(string id)
     {
-        try
+        var profileKey = $"admin/students/profile/{id}";
+        await localStorage.RemoveItemAsync(profileKey);
+        var profile = await GetProfile(id);
+        var student = students.FirstOrDefault(s => s.Id == id);
+        var modifiedStudents = students.ToList();
+        modifiedStudents.Remove(student);
+        modifiedStudents.Add(student);
+        students = modifiedStudents;
+    }
+
+    async Task<ProfileResource> GetProfile(string id)
+    {
+        var profileKey = $"admin/students/profile/{id}";
+        var profile = await localStorage.GetItemAsync<ProfileResource>(profileKey);
+        if( profile == null)
         {
-            var profileKey = $"admin/students/profile/{id}";
-            var profile = await Http.GetFromJsonAsync<ProfileResource>(profileKey);
+            profile = await Http.GetFromJsonAsync<ProfileResource>(profileKey);
             await localStorage.SetItemAsync(profileKey, profile);
-            var student = students.FirstOrDefault(s => s.Id == id);
-            student.Profile = profile;
-            students = students.ToList();
         }
-        catch (System.Exception e)
-        {
-            error = e.Message;
-        }
-        finally{
-            StateHasChanged();
-        }
+
+        return profile;
     }
 }

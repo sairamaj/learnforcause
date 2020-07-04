@@ -5,14 +5,19 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject IMatToaster Toaster
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 
-@if (studentHomeworkPoints == null){
+@if(error != null){
+    <ErrorComponent Error=@error />
+}
+
+else if (studentHomeworkPoints == null){
     <span><em>Loading...</em></span>
 }
 else{
 <h4>Student: @Name</h4>
 <MatButton Raised="true" OnClick="@OnUpdate" style="float: left">Update</MatButton>
-<MatButton Raised="true" OnClick="@OnBackToManageStudents" style="float: right">Back to Manage Students</MatButton>
+<MatButton Raised="true" OnClick="@OnBackToManageStudents" style="float: right">Back to Manage Homework</MatButton>
 <MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
             <MatTableRow>
                 <td><MatCheckbox 
@@ -54,6 +59,10 @@ else{
                     homeworkPoint.IsDone = homeworkIds.FirstOrDefault(id => id == s.Id) != null;
                     return homeworkPoint;
                 });
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
         }
         catch (System.Exception e)
         {

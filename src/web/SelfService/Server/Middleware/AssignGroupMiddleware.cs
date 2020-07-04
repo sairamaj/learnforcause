@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using SelfService.Shared;
@@ -21,8 +22,7 @@ namespace SelfService.Server.Middleware
         {
             await Task.Delay(0);
             this.logger.LogInformation($"InvokeAsync ...{context.User.GetEmail()}");
-            if( context.User.GetEmail() == "sairamaj@gmail.com"
-            || context.User.GetEmail() == "srijamalapuram@gmail.com")
+            if (IsAdmin(context.User.GetEmail()))
             {
                 this.logger.LogInformation("Adding administrators role");
                 ((ClaimsIdentity)context.User.Identity)
@@ -31,6 +31,12 @@ namespace SelfService.Server.Middleware
 
             // Call the next delegate/middleware in the pipeline
             await next(context);
+        }
+
+        private bool IsAdmin(string email)
+        {
+            string[] currentAdmins = new string[] { "sairamaj@gmail.com", "srijamalapuram@gmail.com","radhachandra@gmail.com","rchandra02@outlook.com" };
+            return currentAdmins.Contains(email);
         }
     }
 }

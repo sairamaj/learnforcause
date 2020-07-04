@@ -7,6 +7,12 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize()]
 @inject IMatToaster Toaster
 
+@if(error != null){
+    <ErrorComponent Error=@error />
+}
+else if( students == null){
+    <span><em>Loading...</em></span>
+}else{
 <MatButton OnClick="@OnManageHomeworkPoints" style="float: right">Manage Homework Points</MatButton>
 <MatButton OnClick="@OnRefresh" style="float: right">Refresh</MatButton>
 <MatTable Items="@students" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
@@ -24,6 +30,7 @@
                 <td><MatButton OnClick="@(e => AddPointsToStudent(@context.Id,@context.Name))">Update</MatButton></td>
             </MatTableRow>
         </MatTable>
+}
 
 @code{
     IEnumerable<SelfService.Shared.Student> students;
@@ -38,6 +45,10 @@
         catch (Microsoft.AspNetCore.Components.WebAssembly.Authentication.AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
+        }
+        catch(Exception e)
+        {
+            error = e.Message;
         }
     }
 
@@ -59,7 +70,6 @@
                 await localStorage.RemoveItemAsync(profileKey);
             }
             await Load();
-
         }
         finally
         {

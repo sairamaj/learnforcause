@@ -6,7 +6,7 @@
 <MatButton Raised=true OnClick="@OnRefresh" style="float: right">Refresh</MatButton>
 
 @if( error != null){
-    <span><em>@error</em></span>
+    <ErrorComponent Error=@error />
 }
 
 @if( studentHomeworkPoints == null){

@@ -5,7 +5,7 @@
 @inject IMatToaster Toaster
 
 @if( error != null){
-    <span><em>@error</em></span>
+    <ErrorComponent Error=@error />
 }
 @if(homeworkPoints == null){
     <span><em>Loading...</em></span>
