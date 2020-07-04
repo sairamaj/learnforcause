@@ -74,30 +74,35 @@ namespace SelfService.Server.Controllers
             await foreach (var u in this.graphRepository.GetUsers()
             .Where(s => testStudents.FirstOrDefault(t => String.Compare(s.Name, t, true) == 0) == null))
             {
-                var profile = await this.studentRepository.GetProfile(u.Id);
-                var student = new Student
-                {
+                yield return new Student{
                     Id = u.Id,
                     Name = u.Name,
-                    Profile = new ProfileResource()
                 };
-                if (profile != null)
-                {
-                    student.Profile = new ProfileResource
-                    {
-                        Id = profile.Id,
-                        Name = profile.Name,
-                        Location = profile.Location,
-                        GitUrl = profile.GithubUrl,
-                        Grade = profile.Grade,
-                        Phone = profile.Phone,
-                        RegisteredClass = profile.RegisteredClass,
-                        HomeworkPoints = profile.HomeworkPoints
-                    };
-                }
-                yield return student;
             }
         }
+
+        [HttpGet]
+        [Route("students/profile/{id}")]
+        public async Task<ProfileResource> GetStudentProfile(string id)
+        {
+            var profile = await this.studentRepository.GetProfile(id);
+            if (profile == null)
+            {
+                return new ProfileResource { Id = id };
+            }
+            return new ProfileResource
+            {
+                Id = profile.Id,
+                Name = profile.Name,
+                Location = profile.Location,
+                GitUrl = profile.GithubUrl,
+                Grade = profile.Grade,
+                Phone = profile.Phone,
+                RegisteredClass = profile.RegisteredClass,
+                HomeworkPoints = profile.HomeworkPoints
+            };
+        }
+
 
         [HttpGet]
         [Route("classes")]
@@ -121,7 +126,8 @@ namespace SelfService.Server.Controllers
             this.logger.LogDebug($"AddHomeworkPoint: {homeworkPoint.Description} {homeworkPoint.NumberofPoints}");
             try
             {
-                await this.adminRepository.AddHomeWorkPoint(new Models.HomeworkPointEntity{
+                await this.adminRepository.AddHomeWorkPoint(new Models.HomeworkPointEntity
+                {
                     Category = homeworkPoint.Category,
                     Description = homeworkPoint.Description,
                     NumberofPoints = homeworkPoint.NumberofPoints,

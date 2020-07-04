@@ -3,8 +3,6 @@
 @inject HttpClient Http
 @inject NavigationManager NavigationManager
 
-@using SelfService.Shared
-
 <MatButton Raised="true" OnClick="@Refresh" style="float: right">Refresh</MatButton>
 <br/>
 <br/>
@@ -53,8 +51,15 @@ else{
     {
         try
         {
-            students = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"))
-                .OrderBy(s => s.Name);
+            var tempStudents = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.Student>>("admin/students"))
+            .ToList();
+            foreach(var student in tempStudents )
+            {
+                var profile = await Http.GetFromJsonAsync<ProfileResource>($"admin/students/profile/{student.Id}");
+                student.Profile = profile;
+            }
+
+            students = tempStudents.OrderBy(s => s.Name);
         }
         catch (System.Exception e)
         {
