@@ -214,5 +214,13 @@ namespace SelfService.Server.Repository
             } while (continuationToken != null);
 
        }
+
+        public async Task<HomePageEntity> GetHomepageMessage()
+        {
+             var table = await GetTable("program");
+            var retrieveOperation = TableOperation.Retrieve<HomePageEntity>("homepage", "messages");
+            var result = await table.ExecuteAsync(retrieveOperation);
+            return result.Result as HomePageEntity;
+        }
     }
 }

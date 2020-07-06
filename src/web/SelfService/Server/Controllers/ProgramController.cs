@@ -48,9 +48,17 @@ namespace SelfService.Server.Controllers
 
         [HttpGet]
         [Route("current/message")]
-        public async Task<string> GetGeneralMessage()
+        public async Task<GeneralMessage> GetGeneralMessage()
         {
-            return await Task.FromResult("# This is general message");
+            var entity = await this.adminReposiotry.GetHomepageMessage();
+            if( entity == null){
+                return await Task.FromResult(new GeneralMessage());
+            }
+            
+            return await Task.FromResult(
+                new GeneralMessage{
+                    Message = entity.Message
+                });
         }
 
         [HttpGet]

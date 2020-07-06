@@ -130,5 +130,10 @@ namespace SelfService.Repository
         {
             throw new NotImplementedException();
         }
+
+        Task<HomePageEntity> IAdminRepository.GetHomepageMessage()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

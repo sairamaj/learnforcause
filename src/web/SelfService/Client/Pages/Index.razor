@@ -15,7 +15,10 @@
     }
 }
 
-<span>@CurrentMessageAsMarkdown</span>
+@if(currentMessage != null)
+{
+    <p style="float: center">@((MarkupString) @currentMessage.CurrentMessageAsMarkdown)</p>
+}
 
 <ResourceViewComponent ResourceName="homepage" />        
 
@@ -23,19 +26,7 @@
 @code{
     CurrentRunningClassInfo currentRunningClass;
     StudentAttendance currentAttendance;
-    string currentMessage;
-
-    public string CurrentMessageAsMarkdown
-    {
-        get
-        {
-            if (string.IsNullOrWhiteSpace(this.currentMessage))
-            {
-                return string.Empty;
-            }
-            return Markdown.ToHtml(this.currentMessage);
-        }
-    }
+    GeneralMessage currentMessage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,17 +34,23 @@
         {
             try
             {
-                currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
-                if (currentRunningClass != null)
-                {
-                    currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
+                try{
+                    currentRunningClass = await Http.GetFromJsonAsync<CurrentRunningClassInfo>("program/class/current");
+                    if (currentRunningClass != null)
+                    {
+                        currentAttendance = await Http.GetFromJsonAsync<StudentAttendance>($"student/class/{currentRunningClass.Id}");
+                    }
+                }
+                catch(Exception){
+                    // Ignore . if there might not be current running class.
                 }
 
-                currentMessage = await Http.GetStringAsync("program/current/message");
+                currentMessage = await Http.GetFromJsonAsync<GeneralMessage>("program/current/message");
+                System.Console.WriteLine($"currentMessage: {currentMessage}");
             }
             catch (Exception e)
             {
-                // Ignore for now.
+                System.Console.WriteLine($"currentMessage: {e.Message}");
             }
         }
         catch (AccessTokenNotAvailableException exception)
