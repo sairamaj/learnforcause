@@ -7,7 +7,7 @@
     * Software
         * Application/Program which you use to interact with computer
             * Internet Browser(Chrome), Windows Word , Notepad.exe
-            * Special software __Operation System__ (which starts the computer, so that you can interact with other applications/programs)
+            * Special software __Operating System__ (which starts the computer, so that you can interact with other applications/programs)
     * CPU/RAM/HardDisk
         * CPU (like human brain, does everything)
         * RAM (Random access memory) (Think of this as your rough paper where you will do any temporary works and discard once your are done)

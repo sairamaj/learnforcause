@@ -72,7 +72,7 @@
         * Below example we are using __age__ and __driver permit__ conditions
         ```java
             int age = 10;
-            if( age <15> ){
+            if( age <15 ){
                 System.out.println("Cannot get driver permit")
             }else if( age >=15 && age <=18  ){
                 System.out.println("You need parent permission.")
