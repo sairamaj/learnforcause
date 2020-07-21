@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SelfService.Server.Models;
 using SelfService.Server.Repository;
+using System.Collections.Generic;
 
 namespace SelfService.Server.Controllers
 {
@@ -16,13 +17,16 @@ namespace SelfService.Server.Controllers
     {
         private readonly ILogger<StudentController> logger;
         private readonly IStudentRepository studentRepository;
+        private readonly IAdminRepository adminRepository;
 
         public StudentController(
             ILogger<StudentController> logger,
-            IStudentRepository studentRepository)
+            IStudentRepository studentRepository,
+            IAdminRepository adminRepository)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.studentRepository = studentRepository ?? throw new ArgumentNullException(nameof(studentRepository));
+            this.adminRepository = adminRepository ?? throw new ArgumentNullException(nameof(adminRepository));
         }
 
         [HttpGet]
@@ -110,6 +114,13 @@ namespace SelfService.Server.Controllers
                 this.logger.LogError($"GetClassStatus : {id} : error:{e}");
                 throw;
             }
+        }
+
+        [HttpGet]
+        [Route("homeworkpoints")]
+        public async Task<IEnumerable<string>> GetStudentHomeworkPoints()
+        {
+            return await this.adminRepository.GetStudentHomeworkPoints(User.GetId());
         }
     }
 }

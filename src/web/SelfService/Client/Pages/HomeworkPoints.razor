@@ -13,12 +13,7 @@
     <span><em>Loading...</em></span>
 }
 else{
-<span>
-    <b>
-    <p>It may not reflect your homework points till next monday(july-6th as we are in the processing of assigning points based on  your github homework)</p>
-    </b>
-</span>
-<MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+<MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=50 Striped=true>
     <MatTableHeader>
                 <th>Status</th>
                 <th>Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
@@ -61,8 +56,8 @@ else{
     async Task LoadHomeworkPoints(string id)
     {
         // Get all home works ids
-        var homeworkIds = await Http.GetFromJsonAsync<IEnumerable<string>>($"admin/student/homeworkpoints/{id}");
-        studentHomeworkPoints = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.HomeworkPoint>>("admin/homeworkpoints"))
+        var homeworkIds = await Http.GetFromJsonAsync<IEnumerable<string>>($"student/homeworkpoints");
+        studentHomeworkPoints = (await Http.GetFromJsonAsync<IEnumerable<SelfService.Shared.HomeworkPoint>>("homework"))
             .OrderBy(s => s.NumberId)
             .Select(s =>
             {

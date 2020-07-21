@@ -18,7 +18,7 @@ else{
 <h4>Student: @Name</h4>
 <MatButton Raised="true" OnClick="@OnUpdate" style="float: left">Update</MatButton>
 <MatButton Raised="true" OnClick="@OnBackToManageStudents" style="float: right">Back to Manage Homework</MatButton>
-<MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=20 Striped=true>
+<MatTable Items="@studentHomeworkPoints" class="mat-elevation-z5" ShowPaging=false PageSize=50 Striped=true>
             <MatTableRow>
                 <td><MatCheckbox 
                 @bind-Value="@context.IsDone" 
