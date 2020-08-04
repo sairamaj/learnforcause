@@ -16,7 +16,7 @@
 
 * Constructor in Py 
     * Constructors are used to create object and set object properties while creating itself.
-    * The method __ __init__ __ represents constructor in Python
+    * The method __ __init__ __n represents constructor in Python
     ```python
         class Disk:
             def __init__(self):
