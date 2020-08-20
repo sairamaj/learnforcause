@@ -1,0 +1,1 @@
+* Add error handling in game as discussed in the class the.
