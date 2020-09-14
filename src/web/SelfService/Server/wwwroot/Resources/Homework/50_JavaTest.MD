@@ -1,12 +1,14 @@
 # Instructions
 
-Following are the questions for test
+
 * Create __JavaTest__ directory which you will be checking in to your repository
+* Refer the class [classes](https://learnforcause.azurewebsites.net/pastclasses)
 * Fore each question create directory with format as __Q1__ (for question 1) , __Q2__ for question 2.
 * If you have any doubts related to the following questions please email me.
 * You have 10+ days to finsih
 * We will meet (both Java and Python) on __Sept 24(Thu) 8PM__ to have final class and have __virtual party__
 
+Following are the questions for test
 ## Quesions
 * __Q1__: Print all odd numbers between 1-100
 
@@ -19,7 +21,7 @@ Following are the questions for test
 
 * __Q4__:  
     * Create Car class 
-        * model, make, boolean for electri or gas
+        * model, make, boolean for electric or gas
         * method: 
             * start
 	        * display
